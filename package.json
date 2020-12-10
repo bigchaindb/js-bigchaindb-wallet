@@ -1,0 +1,63 @@
+{
+  "name": "root",
+  "private": true,
+  "homepage": "https://github.com/s1seven/js-bigchaindb-wallets#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/s1seven/js-bigchaindb-wallets.git"
+  },
+  "bugs": {
+    "url": "https://github.com/s1seven/js-bigchaindb-wallets/issues"
+  },
+  "engines": {
+    "node": ">=12",
+    "npm": ">=6"
+  },
+  "scripts": {
+    "set-env": "read -p 'NPM_TOKEN: ' NPM_TOKEN && echo NPM_TOKEN=$NPM_TOKEN > .env",
+    "bootstrap": "npm install lerna && lerna bootstrap && npm install",
+    "format": "prettier --write \"packages/**/*.{ts,json}\"",
+    "reset": "npm run cleanup && rimraf -rf node_modules && npm run bootstrap",
+    "test": "lerna run test",
+    "test:key-derivation": "lerna run --scope @s1seven/js-bigchain-key-derivation test",
+    "build": "npm run cleanup && lerna run compile",
+    "cleanup": "lerna run cleanup --stream --parallel",
+    "lint": "lerna run lint",
+    "lint:staged": "lint-staged",
+    "prepare": "npm run format && npm run lint",
+    "prepublishOnly": "npm run build",
+    "version": "lerna version"
+  },
+  "devDependencies": {
+    "@lerna/publish": "3.22.1",
+    "@lerna/run": "3.21.0",
+    "@types/jest": "26.0.12",
+    "@types/node": "14.0.27",
+    "@typescript-eslint/eslint-plugin": "^4.6.1",
+    "@typescript-eslint/parser": "^4.6.1",
+    "eslint": "^7.11.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "jest": "26.4.2",
+    "jest-junit": "11.1.0",
+    "lerna": "^3.22.1",
+    "lint-staged": "^10.5.1",
+    "npm-run-all": "^4.1.5",
+    "pre-commit": "^1.2.2",
+    "prettier": "2.1.1",
+    "rimraf": "^3.0.2",
+    "ts-jest": "26.3.0",
+    "ts-node": "9.0.0",
+    "tsconfig-paths": "3.9.0",
+    "typescript": "4.0.2"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint"
+    ]
+  },
+  "pre-commit": [
+    "lint:staged",
+    "test"
+  ]
+}
