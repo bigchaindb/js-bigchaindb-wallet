@@ -35,7 +35,7 @@ export class BigChainWallet {
       throw new TypeError(INVALID_LANGUAGE(language));
     }
     const wordlist = bip39.wordlists[language];
-    return bip39.generateMnemonic(strength, rngFn, wordlist);
+    return bip39.generateMnemonic(strength || ENTROPY_BITS, rngFn, wordlist);
   }
 
   static validateMnemonic(mnemonic: string, language = 'english') {
