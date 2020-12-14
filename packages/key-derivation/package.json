@@ -1,0 +1,44 @@
+{
+  "name": "@s1seven/js-bigchain-key-derivation",
+  "version": "0.0.0",
+  "description": "Key derivation for BigChainDB",
+  "keywords": [
+    "bigchain",
+    "ed25519",
+    "keys"
+  ],
+  "author": "getlarge <ed@getlarge.eu>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "dist/index.js",
+  "directories": {
+    "src": "src",
+    "lib": "dist",
+    "test": "__tests__"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm run clean && npm run compile",
+    "clean": "rimraf -rf ./dist",
+    "cleanup": "rimraf -rf dist coverage",
+    "compile": "tsc -p tsconfig.build.json",
+    "lint": "eslint ./ --ext .js,.ts,.tsx --quiet --fix",
+    "test": "jest --ci --config ../../jest.config.json ",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "eslint": "^7.11.0",
+    "rimraf": "~3.0.2",
+    "typescript": "4.0.2"
+  },
+  "dependencies": {
+    "bip39": "^3.0.3",
+    "bs58": "^4.0.1",
+    "crypto-conditions": "^2.0.3",
+    "ed25519-hd-key": "^1.1.2",
+    "ed2curve": "^0.3.0",
+    "tweetnacl-util": "^0.15.1"
+  }
+}
