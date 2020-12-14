@@ -39,6 +39,7 @@
     "crypto-conditions": "^2.0.3",
     "ed25519-hd-key": "^1.1.2",
     "ed2curve": "^0.3.0",
+    "tweetnacl": "^1.0.3",
     "tweetnacl-util": "^0.15.1"
   }
 }

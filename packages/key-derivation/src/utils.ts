@@ -1,4 +1,5 @@
 import * as base58 from 'bs58';
+import * as ed2curve from 'ed2curve';
 import { encodeBase64 } from 'tweetnacl-util';
 
 export function bufferToUint8Array(buffer: Buffer) {
@@ -41,4 +42,20 @@ export function keyFactory(
     default:
       return key;
   }
+}
+
+export function convertPublicKey(publicKey: Uint8Array): Uint8Array {
+  return ed2curve.convertPublicKey(publicKey);
+}
+
+export function convertPrivateKey(privateKey: Uint8Array): Uint8Array {
+  return ed2curve.convertSecretKey(privateKey);
+}
+
+export function convertKeyPair(keyPair: {
+  publicKey: Uint8Array;
+  privateKey: Uint8Array;
+}): { publicKey: Uint8Array; privateKey: Uint8Array } {
+  const { publicKey, privateKey } = keyPair;
+  return { publicKey: convertPublicKey(publicKey), privateKey: convertPrivateKey(privateKey) };
 }
