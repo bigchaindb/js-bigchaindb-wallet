@@ -1,0 +1,41 @@
+{
+  "name": "@s1seven/js-bigchain-wallet-jwt",
+  "version": "0.0.0",
+  "description": "JWT tool for BigChainDB wallet",
+  "keywords": [
+    "bigchaindb",
+    "ed25519",
+    "jwt"
+  ],
+  "author": "getlarge <ed@getlarge.eu>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "dist/index.js",
+  "directories": {
+    "src": "src",
+    "lib": "dist",
+    "test": "__tests__"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm run clean && npm run compile",
+    "clean": "rimraf -rf ./dist",
+    "cleanup": "rimraf -rf dist coverage",
+    "compile": "tsc -p tsconfig.build.json",
+    "lint": "eslint ./ --ext .js,.ts,.tsx --quiet --fix",
+    "test": "jest --ci --config ../../jest.config.json ",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@s1seven/js-bigchain-wallet-plugins": "^0.0.0",
+    "rimraf": "~3.0.2",
+    "typescript": "4.0.2"
+  },
+  "dependencies": {
+    "@s1seven/js-bigchain-key-derivation": "^0.0.0",
+    "@s1seven/js-bigchain-wallet-types": "^0.0.0",
+    "jwt-ed25519-tn": "getlarge/jsonwebtoken-ed25519-tn"
+  }
+}
