@@ -2,10 +2,10 @@ import { Cipher, CipherType } from '@s1seven/js-bigchain-wallet-types';
 import { box, randomBytes } from 'tweetnacl';
 import { decodeUTF8, encodeUTF8, encodeBase64, decodeBase64 } from 'tweetnacl-util';
 
-export default class AsymmetricCipher implements Cipher {
+export class AsymmetricCipher implements Cipher {
   name: 'NACLBOX';
   type: CipherType = 'asymmetric';
-  _sharedKey: Uint8Array;
+  sharedSecret: Uint8Array;
 
   static createKeyPair() {
     return box.keyPair();
@@ -52,13 +52,13 @@ export default class AsymmetricCipher implements Cipher {
   }
 
   constructor(privateKey: Uint8Array, theirPublicKey: Uint8Array) {
-    this._sharedKey = AsymmetricCipher.createSharedKey(privateKey, theirPublicKey);
+    this.sharedSecret = AsymmetricCipher.createSharedKey(privateKey, theirPublicKey);
   }
 
   encrypt(json: Record<string, unknown>) {
     return new Promise<string>((resolve, reject) => {
       try {
-        const encrypted = AsymmetricCipher.encrypt(json, this._sharedKey);
+        const encrypted = AsymmetricCipher.encrypt(json, this.sharedSecret);
         resolve(encrypted);
       } catch (e) {
         reject(e);
@@ -69,7 +69,7 @@ export default class AsymmetricCipher implements Cipher {
   decrypt(messageWithNonce: string) {
     return new Promise<Record<string, unknown>>((resolve, reject) => {
       try {
-        const decrypted = AsymmetricCipher.decrypt(messageWithNonce, this._sharedKey);
+        const decrypted = AsymmetricCipher.decrypt(messageWithNonce, this.sharedSecret);
         resolve(decrypted);
       } catch (e) {
         reject(e);

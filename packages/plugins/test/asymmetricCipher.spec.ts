@@ -1,7 +1,7 @@
-import AsymmetricCipher from '../src/asymmetricCipher';
+import { AsymmetricCipher } from '../src/asymmetricCipher';
 
 describe('AsymmetricCipher', function () {
-  it('Encrypt - decrypt from static methods', () => {
+  it('Should encrypt - decrypt from static methods', () => {
     const obj = { hello: 'world' };
     const keyPairA = AsymmetricCipher.createKeyPair();
     const keyPairB = AsymmetricCipher.createKeyPair();
@@ -12,7 +12,7 @@ describe('AsymmetricCipher', function () {
     expect(decrypted).toEqual(obj);
   });
 
-  it('Encrypt - decrypt from prototype methods', async () => {
+  it('Should encrypt - decrypt from prototype methods', async () => {
     const obj = { hello: 'world' };
     const keyPairA = AsymmetricCipher.createKeyPair();
     const keyPairB = AsymmetricCipher.createKeyPair();
