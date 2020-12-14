@@ -15,6 +15,16 @@ export default [
       ['Avx64JLRN78D7vvFcbbowCPJQ9zfyGJDEPRXFUdnZ1vZ', 'BCrWRz4PLAK2yiGZPTmHLAC5p9yYEKDFmHyBcDChSKcg'],
       ['CKLTNZgzA5NNnrd9YpyWz1xCGvLwQXXipgzn5s54wU8U', '82r64RbVB1AdN417JyXjqtUQmZUHZLPbZxHNHdGj4deZ'],
     ],
+    conversions: {
+      sign: [
+        'e84204946ededb165b633b3137fbff27fcb7e91ded9ea7e134696c3270265bd6',
+        'dcccd75fbd91b982d1e593db2f1ad662ffbc21291c5c00a23b8580fae4e695b7',
+      ],
+      curve: [
+        '171743712a5e1b9293a8d8442cea10c8d3ce2bf1dfd6e4fc7f194df39dfd364e',
+        '804486c02dd7db5ba35e834e6f8780046fbe264cee923fe8a96a73d73e40067c',
+      ],
+    },
   },
   {
     mnemonic: 'prepare job trick inner carry since day virtual protect grow indicate boy',
@@ -32,6 +42,16 @@ export default [
       ['2Ay814rbUJhLzMY5MDWmgtm483gmJEERuU8GEmaHw1dY', 'BEYRzH8VyF21nhcaH1TdEm78yQ1pVoWXDps5XBYDxwA6'],
       ['96bvA17uMMHoQYDM8caF38Kcw5VehnbM56zGY8K9Rc2x', '2G4XzmLMbhTLUdGdiguDPn2SrXALhghx39U2UxptEwq9'],
     ],
+    conversions: {
+      sign: [
+        '9314b813d20b081899b7ac4a2a12c0ba6c000d30775784f7c153416eda6f5c4c',
+        '42833e1aeeca1e12ec6d9729d73411e8b25e008987c7a9a7cf072636e4974b91',
+      ],
+      curve: [
+        'c98cd1bb38afddbe98fd06c57c2f99ce03152f4a5746c0d000e0450d57bde414',
+        'e03c1cc938d5865d567913439f5d953ae34550fe870222dc472f22dadabe1567',
+      ],
+    },
   },
   {
     mnemonic: 'prepare job trick inner carry since day virtual protect grow indicate boy',
@@ -49,6 +69,16 @@ export default [
       ['4ZRKZrxrXAWgUyQPwTyqy4P1AJv27tqWjiB8NEWiRpaQ', 'EXEHBdCyQTznGv9v2bUT3hQphf3ompreBWocy8uCw6QV'],
       ['EgKemUK249m273CwvC1K3f93FZesH1UBmEQ2mxcJKbu1', '4nRNetcR36UwLAjnZXzgxvjM8BwLcQYGAu92D1njH5du'],
     ],
+    conversions: {
+      sign: [
+        'a0fc6fdab2dba5096a84c68b4f01fbecd4fee8a7e4488ad5e7a10335749ab43f',
+        'f814c207b856a21be32fca44706c0f1bf02ccccaa5a7ec59624d14a716c3008a',
+      ],
+      curve: [
+        '354efa994dde00291ccba8943b29c0d712057375d649061609e317094f250161',
+        'b04ad89ed8d37074ba0ae25dbf51253a33e8902224a39f179ed6cc9096b55d61',
+      ],
+    },
   },
   {
     mnemonic: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
@@ -66,5 +96,15 @@ export default [
       ['964n2JbSqoF7Utwr7MtCY3b9HBYeiTcXM7ZYA21dogkG', 'VvcWg7ZyaGpWPeYbiPTdHUSD8GeMCeHRnddcj4PqeoJ'],
       ['2g5dcAfi9Kuw3ZzeKr3QRczeUGQN13662CeMGvUpSyZe', 'DxmzVb1hbmnPvPVccnSCDVbEUDwgycTQj1SgpMmHepKq'],
     ],
+    conversions: {
+      sign: [
+        '09b566b624acf3adb6ca775905565da9287cf00d3f8513ffcc470ec73a1ee205',
+        '36b00b3911af1dd0a3669a57f448b96e259606d0afbb8c4942b7bf8d7666c828',
+      ],
+      curve: [
+        '8b409f55e14b138b54b9065a12950deecbd860809475b6082ceac37d0ee73f36',
+        '588b1c959ef19b0c1587d3d126540533853ce2346f737c3279e67d32b5736347',
+      ],
+    },
   },
 ];

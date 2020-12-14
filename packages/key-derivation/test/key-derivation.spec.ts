@@ -1,4 +1,4 @@
-import { BigChainWallet, KeyPair, BIG_CHAIN_PATH } from '../src';
+import { BigChainWallet, KeyPair, BIG_CHAIN_PATH, uint8ArrayToHexString } from '../src';
 import cases from './fixtures/cases';
 
 const assertKeypair = (actualKeypair: KeyPair, expectedPublicKey: string, expectedPrivateKey: string) => {
@@ -11,7 +11,8 @@ const specTestCase = (num: number) => () => {
   const wallet = BigChainWallet.fromMnemonic(testCase.mnemonic, testCase.passPhrase);
 
   it('derives expected parent key', () => {
-    expect(wallet.derive(BIG_CHAIN_PATH).toString('hex')).toEqual(testCase.parentKey);
+    const masterKey = uint8ArrayToHexString(wallet.derive(BIG_CHAIN_PATH));
+    expect(masterKey).toEqual(testCase.parentKey);
   });
 
   it('derives expected child keys', () => {
@@ -19,7 +20,20 @@ const specTestCase = (num: number) => () => {
       assertKeypair(wallet.getKeypair(index), publicKey, privateKey),
     );
   });
-  //? TODO: test conversion to ed's curves
+
+  it("convert signing keys to Edward's curve", () => {
+    const keyPair = wallet.getKeypair();
+    const publicKeyHex = keyPair.publicKey('hex');
+    const privateKeyHex = keyPair.privateKey('hex');
+    expect(publicKeyHex).toEqual(testCase.conversions.sign[0]);
+    expect(privateKeyHex).toEqual(testCase.conversions.sign[1]);
+
+    const curveKeyPair = wallet.getDHKeyPair();
+    const curvePublicKeyHex = curveKeyPair.publicKey('hex');
+    const curvePrivateKeyHex = curveKeyPair.privateKey('hex');
+    expect(curvePublicKeyHex).toEqual(testCase.conversions.curve[0]);
+    expect(curvePrivateKeyHex).toEqual(testCase.conversions.curve[1]);
+  });
 };
 
 describe('KeyDerivation', function () {
