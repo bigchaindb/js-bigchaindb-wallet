@@ -1,0 +1,30 @@
+{
+  "name": "@s1seven/js-bigchain-wallet-types",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "getlarge <ed@getlarge.eu>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "dist/index.js",
+  "browser": "dist/index.js",
+  "directories": {
+    "src": "src",
+    "test": "__tests__"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm run clean && npm run compile",
+    "clean": "rimraf -rf ./dist",
+    "cleanup": "rimraf -rf dist coverage",
+    "compile": "tsc -p tsconfig.build.json",
+    "lint": "eslint ./ --ext .js,.ts,.tsx --quiet --fix",
+    "test": "jest --ci --config ../../jest.config.json ",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "rimraf": "~3.0.2",
+    "typescript": "4.0.2"
+  }
+}
