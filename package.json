@@ -21,6 +21,7 @@
     "test": "lerna run test",
     "test:key-derivation": "lerna run --scope @s1seven/js-bigchain-key-derivation test",
     "test:plugins": "lerna run --scope @s1seven/js-bigchain-wallet-plugins test",
+    "test:jwt": "lerna run --scope @s1seven/js-bigchain-wallet-jwt test",
     "build": "npm run cleanup && lerna run compile",
     "cleanup": "lerna run cleanup --stream --parallel",
     "lint": "lerna run lint",
