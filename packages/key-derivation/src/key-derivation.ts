@@ -102,14 +102,14 @@ export class BigChainWallet {
     return this.derive(`${BIG_CHAIN_PATH}/${account}'/${chain}'/${index}'`);
   }
 
-  getKeypairFromDerivedKey(key: Uint8Array): KeyPair {
+  getKeyPairFromDerivedKey(key: Uint8Array): KeyPair {
     // const uInt8Key = bufferToUint8Array(key);
     const publicKey = (output?: KeyOutput) => keyFactory(getPublicKey(key as Buffer, false), output);
     const privateKey = (output?: KeyOutput) => keyFactory(key, output, 'secret');
     return { publicKey, privateKey };
   }
 
-  getKeypair(account?: number, index?: number, chain: Chain = 0): KeyPair {
+  getKeyPair(account?: number, index?: number, chain: Chain = 0): KeyPair {
     let key: Uint8Array;
     if (typeof account == 'number' && typeof index === 'number') {
       key = this.getAccountChildKey(account, index, chain);
@@ -118,20 +118,20 @@ export class BigChainWallet {
     } else {
       key = this.derive(BIG_CHAIN_PATH);
     }
-    return this.getKeypairFromDerivedKey(key);
+    return this.getKeyPairFromDerivedKey(key);
   }
 
   getPublicKey(account?: number, output?: KeyOutput) {
-    return this.getKeypair(account).publicKey(output);
+    return this.getKeyPair(account).publicKey(output);
   }
 
   getPrivateKey(account?: number, output?: KeyOutput) {
-    return this.getKeypair(account).privateKey(output);
+    return this.getKeyPair(account).privateKey(output);
   }
 
   getFullPrivateKey(account?: number, output?: KeyOutput) {
-    const privKey = this.getKeypair(account).privateKey() as Uint8Array;
-    const pubKey = this.getKeypair(account).publicKey() as Uint8Array;
+    const privKey = this.getKeyPair(account).privateKey() as Uint8Array;
+    const pubKey = this.getKeyPair(account).publicKey() as Uint8Array;
     const key = new Uint8Array(privKey.length + pubKey.length);
     key.set(privKey);
     key.set(pubKey, privKey.length);
@@ -140,7 +140,7 @@ export class BigChainWallet {
   }
 
   getDHKeyPair(account?: number): KeyPair {
-    const keyPair = this.getKeypair(account);
+    const keyPair = this.getKeyPair(account);
     const publicKeyBuffer = convertPublicKey(keyPair.publicKey() as Uint8Array);
     const privateKeyBuffer = convertPrivateKey(keyPair.privateKey() as Uint8Array);
     const publicKey = (output?: KeyOutput) => keyFactory(publicKeyBuffer, output);
@@ -149,7 +149,7 @@ export class BigChainWallet {
   }
 
   getDHPublicKey(account?: number, output?: KeyOutput) {
-    const publicKeyBuffer = convertPublicKey(this.getKeypair(account).publicKey() as Uint8Array);
+    const publicKeyBuffer = convertPublicKey(this.getKeyPair(account).publicKey() as Uint8Array);
     return keyFactory(publicKeyBuffer, output);
   }
 

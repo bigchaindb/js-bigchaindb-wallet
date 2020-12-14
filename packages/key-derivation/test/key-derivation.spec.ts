@@ -10,19 +10,19 @@ const specTestCase = (num: number) => () => {
   const testCase = cases[num];
   const wallet = BigChainWallet.fromMnemonic(testCase.mnemonic, testCase.passPhrase);
 
-  it('derives expected parent key', () => {
+  it('should derives expected parent key', () => {
     const masterKey = uint8ArrayToHexString(wallet.derive(BIG_CHAIN_PATH));
     expect(masterKey).toEqual(testCase.parentKey);
   });
 
-  it('derives expected child keys', () => {
+  it('should derives expected child keys', () => {
     testCase.keyPairs.forEach(([publicKey, privateKey], index) =>
-      assertKeypair(wallet.getKeypair(index), publicKey, privateKey),
+      assertKeypair(wallet.getKeyPair(index), publicKey, privateKey),
     );
   });
 
-  it("convert signing keys to Edward's curve", () => {
-    const keyPair = wallet.getKeypair();
+  it("should convert signing keys to Edward's curve", () => {
+    const keyPair = wallet.getKeyPair();
     const publicKeyHex = keyPair.publicKey('hex');
     const privateKeyHex = keyPair.privateKey('hex');
     expect(publicKeyHex).toEqual(testCase.conversions.sign[0]);
