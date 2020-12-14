@@ -8,3 +8,5 @@ This repository contains a suite of components and modules to ease the creation 
 ### List of packages
 
 - [Key-Derivation](https://github.com/s1seven/schema-tools/tree/master/packages/key-derivation#readme)
+- [Plugins](https://github.com/s1seven/schema-tools/tree/master/packages/plugins#readme)
+- [Types](https://github.com/s1seven/schema-tools/tree/master/packages/types#readme)

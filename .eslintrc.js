@@ -15,7 +15,7 @@ module.exports = {
     sourceType: 'module', // Allows for the use of imports
   },
   plugins: ['@typescript-eslint'],
-  // ignorePatterns: ['**/fixtures/*', '**/schemaTypes.ts'],
+  ignorePatterns: ['**/fixtures/*', '**/dist'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
