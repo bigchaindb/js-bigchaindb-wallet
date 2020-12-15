@@ -54,9 +54,9 @@ export type BaseTokenPayload = {
 export class TokenService {
   _algorithm = 'Ed25519';
   _issuer = 'BigChainDB';
-  _publicKey: Buffer;
-  _privateKey: Buffer;
-  _cipher: Cipher;
+  private _publicKey: Buffer;
+  private _privateKey: Buffer;
+  private _cipher: Cipher;
 
   static fromSeed(seed: string | Buffer, accountIndex?: number) {
     const wallet = BigChainWallet.fromSeed(seed);
