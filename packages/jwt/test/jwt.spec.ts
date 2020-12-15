@@ -1,5 +1,5 @@
-import { BigChainWallet } from '@s1seven/js-bigchain-key-derivation';
-import { AsymmetricCipher, SymmetricCipher } from '@s1seven/js-bigchain-wallet-plugins';
+import { BigChainWallet } from '@s1seven/js-bigchaindb-key-derivation';
+import { AsymmetricCipher, SymmetricCipher } from '@s1seven/js-bigchaindb-wallet-plugins';
 import { TokenService } from '../src';
 
 describe('TokenService', function () {

@@ -1,4 +1,4 @@
-import { Cipher, CipherType } from '@s1seven/js-bigchain-wallet-types';
+import { Cipher, CipherType } from '@s1seven/js-bigchaindb-wallet-types';
 import { secretbox, randomBytes } from 'tweetnacl';
 import { decodeUTF8, encodeUTF8, encodeBase64, decodeBase64 } from 'tweetnacl-util';
 

@@ -1,7 +1,7 @@
 {
   "name": "@s1seven/js-bigchaindb-wallet-types",
   "version": "0.0.0",
-  "description": "> TODO: description",
+  "description": "Shared types",
   "author": "getlarge <ed@getlarge.eu>",
   "homepage": "",
   "license": "ISC",
