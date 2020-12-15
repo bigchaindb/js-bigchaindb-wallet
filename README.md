@@ -7,6 +7,7 @@ This repository contains a suite of components and modules to ease the creation 
 
 ### List of packages
 
-- [Key-Derivation](https://github.com/s1seven/schema-tools/tree/master/packages/key-derivation#readme)
-- [Plugins](https://github.com/s1seven/schema-tools/tree/master/packages/plugins#readme)
-- [Types](https://github.com/s1seven/schema-tools/tree/master/packages/types#readme)
+- [Key-Derivation](https://github.com/s1seven/js-bigchaindb-wallet/tree/master/packages/key-derivation#readme)
+- [Plugins](https://github.com/s1seven/js-bigchaindb-wallet/tree/master/packages/plugins#readme)
+- [Types](https://github.com/s1seven/js-bigchaindb-wallet/tree/master/packages/types#readme)
+- [JWT](https://github.com/s1seven/js-bigchaindb-wallet/tree/master/packages/jwt#readme)
