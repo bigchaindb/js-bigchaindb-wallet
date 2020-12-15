@@ -46,6 +46,11 @@ export type SignOptions = {
   mutatePayload?: boolean;
 };
 
+export type BaseTokenPayload = {
+  jwt: string;
+  [key: string]: unknown;
+};
+
 export class TokenService {
   _algorithm = 'Ed25519';
   _issuer = 'BigChainDB';
@@ -56,10 +61,9 @@ export class TokenService {
   static fromSeed(seed: string | Buffer, accountIndex?: number) {
     const wallet = BigChainWallet.fromSeed(seed);
     const keyPair = wallet.getKeyPair(accountIndex);
-    const privateKey = wallet.getFullPrivateKey(accountIndex) as Uint8Array;
-    const publicKey = keyPair.publicKey() as Uint8Array;
-    return new TokenService({ publicKey: Buffer.from(publicKey), privateKey: Buffer.from(privateKey) });
-    // return new TokenService({ publicKey, privateKey });
+    const privateKey = wallet.getFullPrivateKey(accountIndex, 'buffer');
+    const publicKey = keyPair.publicKey('buffer');
+    return new TokenService({ publicKey, privateKey });
   }
 
   static fromKeyPair(keyPair: { publicKey: Uint8Array | Buffer | string; privateKey: Uint8Array | Buffer | string }) {
@@ -72,7 +76,7 @@ export class TokenService {
 
     Object.keys(keyPair).forEach((key) => {
       if (typeof keyPair[key] === 'string') {
-        keyPair[key] = Buffer.from(keyPair[key], 'hex') as Buffer;
+        keyPair[key] = Buffer.from(keyPair[key], 'hex');
       } else if (keyPair[key] instanceof Uint8Array) {
         keyPair[key] = Buffer.from(keyPair[key]);
       } else if (!Buffer.isBuffer(keyPair[key])) {
@@ -121,60 +125,54 @@ export class TokenService {
     }
   }
 
-  sign(content: Record<string, unknown>, options: SignOptions = {}): string {
+  sign<T = Record<string, unknown>>(payload: T, options: SignOptions = {}): string {
     const { subject = 'transaction', issuer = this.issuer } = options;
     //? TODO: use keyid field to match specific algorithm
-    return sign(content, { key: this._privateKey, algorithm: this.algorithm }, { ...options, issuer, subject });
+    return sign(payload, { key: this._privateKey, algorithm: this.algorithm }, { ...options, issuer, subject });
   }
 
-  async encrypt(token: string) {
+  async encrypt<T = BaseTokenPayload>(payload: T) {
     this.validateCipher();
     if (this.cipher.type === 'asymmetric') {
-      return this.cipher.encrypt({ token }, this.cipher.sharedSecret);
+      return this.cipher.encrypt<T>(payload, this.cipher.sharedKey);
     } else if (this.cipher.type === 'symmetric') {
-      return this.cipher.encrypt({ token }, this.cipher.secret);
+      return this.cipher.encrypt<T>(payload, this.cipher.secret);
     }
     throw new Error(INVALID_CIPHER);
   }
 
-  async produce(content: { claim: any; [key: string]: any }, options?: SignOptions) {
+  async produce<T = Record<string, unknown>>(payload: T, options?: SignOptions) {
     this.validateCipher();
-    const token = this.sign(content, options);
-    return this.encrypt(token);
+    const jwt = this.sign<T>(payload, options);
+    return this.encrypt<BaseTokenPayload>({ jwt });
   }
 
-  decode(token: string) {
-    return decode(token, { complete: true });
+  decode<T = Record<string, unknown>>(jwt: string): T & Verification {
+    return decode(jwt, { complete: true }) as T & Verification;
   }
 
-  async decrypt(encryptedToken: string): Promise<{ token: string; [key: string]: unknown }> {
+  async decrypt<T = BaseTokenPayload>(encryptedPayload: string): Promise<T> {
     this.validateCipher();
     if (this.cipher.type === 'asymmetric') {
-      return (await this.cipher.decrypt(encryptedToken, this.cipher.sharedSecret)) as {
-        token: string;
-        [key: string]: unknown;
-      };
+      return this.cipher.decrypt<T>(encryptedPayload, this.cipher.sharedKey);
     } else if (this.cipher.type === 'symmetric') {
-      return (await this.cipher.decrypt(encryptedToken, this.cipher.secret)) as {
-        token: string;
-        [key: string]: unknown;
-      };
+      return this.cipher.decrypt<T>(encryptedPayload, this.cipher.secret);
     }
     throw new Error(INVALID_CIPHER);
   }
 
-  async verify(token: string): Promise<Verification> {
+  async verify<T = Record<string, unknown>>(jwt: string): Promise<Verification & T> {
     return new Promise((resolve, reject) => {
       verify(
-        token,
+        jwt,
         { key: this._publicKey, algorithm: this.algorithm },
-        (err: typeof JsonWebTokenError, res: Verification) => (err ? reject(err) : resolve(res)),
+        (err: typeof JsonWebTokenError, res: T & Verification) => (err ? reject(err) : resolve(res)),
       );
     });
   }
 
-  async consume(encryptedToken: string) {
-    const { token } = await this.decrypt(encryptedToken);
-    return this.verify(token);
+  async consume<T = Record<string, unknown>>(encryptedJwt: string) {
+    const { jwt } = await this.decrypt<BaseTokenPayload>(encryptedJwt);
+    return this.verify<T>(jwt);
   }
 }
