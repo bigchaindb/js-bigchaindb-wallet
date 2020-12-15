@@ -1,15 +1,23 @@
 {
-  "name": "@s1seven/js-bigchain-wallet-types",
+  "name": "@s1seven/js-bigchaindb-wallet-types",
   "version": "0.0.0",
   "description": "> TODO: description",
   "author": "getlarge <ed@getlarge.eu>",
   "homepage": "",
   "license": "ISC",
-  "main": "dist/index.js",
-  "browser": "dist/index.js",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "publicConfig": {
+    "access": "public"
+  },
+  "types": "dist/index",
+  "main": "dist/index",
+  "browser": "dist/index",
   "directories": {
     "src": "src",
-    "test": "__tests__"
+    "lib": "dist",
+    "test": "test"
   },
   "files": [
     "dist"

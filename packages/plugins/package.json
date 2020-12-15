@@ -1,5 +1,5 @@
 {
-  "name": "@s1seven/js-bigchain-wallet-plugins",
+  "name": "@s1seven/js-bigchaindb-wallet-plugins",
   "version": "0.0.0",
   "description": "Plugins for BigChainDB wallet",
   "keywords": [
@@ -10,11 +10,19 @@
   "author": "getlarge <ed@getlarge.eu>",
   "homepage": "",
   "license": "ISC",
-  "main": "dist/index.js",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "publicConfig": {
+    "access": "public"
+  },
+  "types": "dist/index",
+  "main": "dist/index",
+  "browser": "dist/index",
   "directories": {
     "src": "src",
     "lib": "dist",
-    "test": "__tests__"
+    "test": "test"
   },
   "files": [
     "dist"
