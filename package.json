@@ -28,7 +28,9 @@
     "lint:staged": "lint-staged",
     "prepare": "npm run format && npm run lint",
     "prepublishOnly": "npm run build",
-    "version": "lerna version"
+    "version": "lerna version",
+    "release": "npm run version && lerna publish from-package",
+    "publish": "lerna publish"
   },
   "devDependencies": {
     "@lerna/publish": "3.22.1",
