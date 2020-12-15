@@ -5,7 +5,7 @@ import { decodeUTF8, encodeUTF8, encodeBase64, decodeBase64 } from 'tweetnacl-ut
 export class AsymmetricCipher implements Cipher {
   name: 'NACLBOX';
   type: CipherType = 'asymmetric';
-  sharedSecret: Uint8Array;
+  sharedKey: Uint8Array;
 
   static createKeyPair() {
     return box.keyPair();
@@ -19,9 +19,9 @@ export class AsymmetricCipher implements Cipher {
     return randomBytes(box.nonceLength);
   }
 
-  static encrypt(json: Record<string, unknown>, secretOrSharedKey: Uint8Array, key?: Uint8Array) {
+  static encrypt<T = Record<string, unknown>>(payload: T, secretOrSharedKey: Uint8Array, key?: Uint8Array): string {
     const nonce = this.newNonce();
-    const messageUint8 = decodeUTF8(JSON.stringify(json));
+    const messageUint8 = decodeUTF8(JSON.stringify(payload));
     const encrypted = key
       ? box(messageUint8, nonce, key, secretOrSharedKey)
       : box.after(messageUint8, nonce, secretOrSharedKey);
@@ -34,7 +34,11 @@ export class AsymmetricCipher implements Cipher {
     return base64FullMessage;
   }
 
-  static decrypt(messageWithNonce: string, secretOrSharedKey: Uint8Array, key?: Uint8Array): Record<string, unknown> {
+  static decrypt<T = Record<string, unknown>>(
+    messageWithNonce: string,
+    secretOrSharedKey: Uint8Array,
+    key?: Uint8Array,
+  ): T {
     const messageWithNonceAsUint8Array = decodeBase64(messageWithNonce);
     const nonce = messageWithNonceAsUint8Array.slice(0, box.nonceLength);
     const message = messageWithNonceAsUint8Array.slice(box.nonceLength, messageWithNonce.length);
@@ -52,13 +56,13 @@ export class AsymmetricCipher implements Cipher {
   }
 
   constructor(privateKey: Uint8Array, theirPublicKey: Uint8Array) {
-    this.sharedSecret = AsymmetricCipher.createSharedKey(privateKey, theirPublicKey);
+    this.sharedKey = AsymmetricCipher.createSharedKey(privateKey, theirPublicKey);
   }
 
-  encrypt(json: Record<string, unknown>) {
+  encrypt<T = Record<string, unknown>>(payload: T) {
     return new Promise<string>((resolve, reject) => {
       try {
-        const encrypted = AsymmetricCipher.encrypt(json, this.sharedSecret);
+        const encrypted = AsymmetricCipher.encrypt<T>(payload, this.sharedKey);
         resolve(encrypted);
       } catch (e) {
         reject(e);
@@ -66,10 +70,10 @@ export class AsymmetricCipher implements Cipher {
     });
   }
 
-  decrypt(messageWithNonce: string) {
-    return new Promise<Record<string, unknown>>((resolve, reject) => {
+  decrypt<T = Record<string, unknown>>(messageWithNonce: string) {
+    return new Promise<T>((resolve, reject) => {
       try {
-        const decrypted = AsymmetricCipher.decrypt(messageWithNonce, this.sharedSecret);
+        const decrypted = AsymmetricCipher.decrypt<T>(messageWithNonce, this.sharedKey);
         resolve(decrypted);
       } catch (e) {
         reject(e);
