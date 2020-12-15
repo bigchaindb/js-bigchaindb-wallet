@@ -1,4 +1,4 @@
-import { BigChainWallet, KeyPair, BIG_CHAIN_PATH, uint8ArrayToHexString } from '../src';
+import { BIG_CHAIN_PATH, BigChainWallet, KeyPair, uint8ArrayToHexString } from '../src';
 import cases from './fixtures/cases';
 
 const assertKeypair = (actualKeypair: KeyPair, expectedPublicKey: string, expectedPrivateKey: string) => {
@@ -21,16 +21,16 @@ const specTestCase = (num: number) => () => {
     );
   });
 
-  it("should convert signing keys to Edward's curve", () => {
+  it(`should convert signing keys to Edward's curve`, () => {
     const keyPair = wallet.getKeyPair();
     const publicKeyHex = keyPair.publicKey('hex');
     const privateKeyHex = keyPair.privateKey('hex');
-    expect(publicKeyHex).toEqual(testCase.conversions.sign[0]);
-    expect(privateKeyHex).toEqual(testCase.conversions.sign[1]);
-
     const curveKeyPair = wallet.getDHKeyPair();
     const curvePublicKeyHex = curveKeyPair.publicKey('hex');
     const curvePrivateKeyHex = curveKeyPair.privateKey('hex');
+
+    expect(publicKeyHex).toEqual(testCase.conversions.sign[0]);
+    expect(privateKeyHex).toEqual(testCase.conversions.sign[1]);
     expect(curvePublicKeyHex).toEqual(testCase.conversions.curve[0]);
     expect(curvePrivateKeyHex).toEqual(testCase.conversions.curve[1]);
   });

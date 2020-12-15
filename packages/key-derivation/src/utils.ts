@@ -19,7 +19,7 @@ ${base64Key}
 `;
 }
 
-export function uint8ArrayToHexString(byteArray: Uint8Array) {
+export function uint8ArrayToHexString(byteArray: Uint8Array): string {
   return Array.prototype.map
     .call(byteArray, function (byte: number) {
       return ('0' + (byte & 0xff).toString(16)).slice(-2);
@@ -27,21 +27,29 @@ export function uint8ArrayToHexString(byteArray: Uint8Array) {
     .join('');
 }
 
-export function keyFactory(
+export type KeyEncodingMap = {
+  hex: () => string;
+  base58: () => string;
+  base64: () => string;
+  buffer: () => Buffer;
+  pem: () => string;
+  default: () => Uint8Array;
+};
+
+export function encodeKey<K extends keyof KeyEncodingMap>(
   key: Uint8Array,
-  output?: undefined | 'base58' | 'hex' | 'pem',
-  type?: string,
-): string | Uint8Array {
-  switch (output) {
-    case 'hex':
-      return uint8ArrayToHexString(key);
-    case 'base58':
-      return base58.encode(key);
-    case 'pem':
-      return toPem(encodeBase64(key), type);
-    default:
-      return key;
-  }
+  output: K,
+  type?: 'secret',
+): ReturnType<KeyEncodingMap[K]> {
+  const keyEncodingMap: KeyEncodingMap = {
+    hex: () => uint8ArrayToHexString(key),
+    base58: () => base58.encode(key) as string,
+    base64: () => encodeBase64(key),
+    buffer: () => Buffer.from(key),
+    pem: () => toPem(encodeBase64(key), type),
+    default: () => key,
+  };
+  return keyEncodingMap[output]() as ReturnType<KeyEncodingMap[K]>;
 }
 
 export function convertPublicKey(publicKey: Uint8Array): Uint8Array {

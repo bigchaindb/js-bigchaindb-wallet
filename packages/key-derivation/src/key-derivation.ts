@@ -1,25 +1,23 @@
+import { derivePath, getMasterKeyFromSeed, getPublicKey } from 'ed25519-hd-key';
+import { bufferToUint8Array, convertPrivateKey, convertPublicKey, encodeKey, KeyEncodingMap } from './utils';
 import * as bip39 from 'bip39';
 import { Ed25519Sha256 } from 'crypto-conditions';
-import { derivePath, getMasterKeyFromSeed, getPublicKey } from 'ed25519-hd-key';
-import { bufferToUint8Array, convertPublicKey, convertPrivateKey, keyFactory } from './utils';
 
 const ENTROPY_BITS = 256;
 const INVALID_SEED = 'Invalid seed (must be a Buffer or hex string)';
 const INVALID_MNEMONIC = 'Invalid mnemonic (see bip39)';
 const INVALID_LANGUAGE = (language: string) => `${language} is not listed in bip39 module`;
 
-export const BIG_CHAIN_PATH = "m/44'/822'";
+export const BIG_CHAIN_PATH = `m/44'/822'`;
 
-export type KeyOutput = undefined | 'base58' | 'hex' | 'pem';
-
+export type KeyEncoding = keyof KeyEncodingMap;
 export type KeyPair = {
-  publicKey: (output?: KeyOutput) => string | Uint8Array;
-  privateKey: (output?: KeyOutput) => string | Uint8Array;
+  publicKey: <K extends keyof KeyEncodingMap = 'default'>(encoding?: K) => ReturnType<KeyEncodingMap[K]>;
+  privateKey: <K extends keyof KeyEncodingMap = 'default'>(encoding?: K) => ReturnType<KeyEncodingMap[K]>;
 };
+export type EncodedKey<K extends keyof KeyEncodingMap = 'default'> = ReturnType<KeyEncodingMap[K]>;
 
-export type KeyFactory = (key: Uint8Array, output?: KeyOutput, type?: string) => string | Uint8Array;
-
-type Chain = 0 | 1;
+export type Chain = 0 | 1;
 
 export class BigChainWallet {
   private _seedHex: string;
@@ -29,7 +27,7 @@ export class BigChainWallet {
     strength: number = ENTROPY_BITS,
     language = 'english',
     rngFn?: (size: number) => Buffer | undefined,
-  ) {
+  ): string {
     if (language && !Object.prototype.hasOwnProperty.call(bip39.wordlists, language)) {
       throw new TypeError(INVALID_LANGUAGE(language));
     }
@@ -37,7 +35,7 @@ export class BigChainWallet {
     return bip39.generateMnemonic(strength || ENTROPY_BITS, rngFn, wordlist);
   }
 
-  static validateMnemonic(mnemonic: string, language = 'english') {
+  static validateMnemonic(mnemonic: string, language = 'english'): boolean {
     if (language && !Object.prototype.hasOwnProperty.call(bip39.wordlists, language)) {
       throw new TypeError(INVALID_LANGUAGE(language));
     }
@@ -48,19 +46,19 @@ export class BigChainWallet {
     return bip39.validateMnemonic(mnemonic, wordlist);
   }
 
-  static createSeed(mnemonic: string, password: string = undefined, language = 'english') {
+  static createSeed(mnemonic: string, password: string = undefined, language = 'english'): Buffer {
     if (!BigChainWallet.validateMnemonic(mnemonic, language)) {
       throw new Error(INVALID_MNEMONIC);
     }
     return bip39.mnemonicToSeedSync(mnemonic, password);
   }
 
-  static fromMnemonic(mnemonic: string, password: string = undefined, language = 'english') {
+  static fromMnemonic(mnemonic: string, password: string = undefined, language = 'english'): BigChainWallet {
     const seedHex = BigChainWallet.createSeed(mnemonic, password, language).toString('hex');
     return new BigChainWallet(seedHex);
   }
 
-  static fromSeed(seed: string | Buffer) {
+  static fromSeed(seed: string | Buffer): BigChainWallet {
     let seedHex: string;
     if (Buffer.isBuffer(seed)) {
       seedHex = seed.toString('hex');
@@ -76,6 +74,14 @@ export class BigChainWallet {
     this._seedHex = seedHex;
   }
 
+  encodeKey<K extends keyof KeyEncodingMap>(
+    key: Uint8Array,
+    encoding: K = 'default' as K,
+    type?: 'secret',
+  ): EncodedKey<K> {
+    return encodeKey(key, encoding, type);
+  }
+
   getMasterKey() {
     return getMasterKeyFromSeed(this._seedHex);
   }
@@ -83,15 +89,17 @@ export class BigChainWallet {
   getMasterKeyPair(): KeyPair {
     const { key } = getMasterKeyFromSeed(this._seedHex);
     const uInt8Key = bufferToUint8Array(key);
-    const publicKey = (output?: KeyOutput) => keyFactory(getPublicKey(uInt8Key as Buffer, false), output);
-    const privateKey = (output?: KeyOutput) => keyFactory(uInt8Key, output, 'secret');
+
+    const publicKey = <K extends keyof KeyEncodingMap = 'default'>(encoding?: K) =>
+      this.encodeKey(getPublicKey(uInt8Key as Buffer, false), encoding);
+    const privateKey = <K extends keyof KeyEncodingMap = 'default'>(encoding?: K) =>
+      this.encodeKey(uInt8Key, encoding, 'secret');
     return { publicKey, privateKey };
   }
 
   derive(derivationPath: string): Uint8Array {
     const data = derivePath(derivationPath, this._seedHex);
-    const uInt8Key = bufferToUint8Array(data.key);
-    return uInt8Key;
+    return bufferToUint8Array(data.key);
   }
 
   getAccountKey(account: number) {
@@ -103,13 +111,14 @@ export class BigChainWallet {
   }
 
   getKeyPairFromDerivedKey(key: Uint8Array): KeyPair {
-    // const uInt8Key = bufferToUint8Array(key);
-    const publicKey = (output?: KeyOutput) => keyFactory(getPublicKey(key as Buffer, false), output);
-    const privateKey = (output?: KeyOutput) => keyFactory(key, output, 'secret');
+    const publicKey = <K extends keyof KeyEncodingMap = 'default'>(encoding?: K) =>
+      this.encodeKey(getPublicKey(key as Buffer, false), encoding);
+    const privateKey = <K extends keyof KeyEncodingMap = 'default'>(encoding?: K) =>
+      this.encodeKey(key, encoding, 'secret');
     return { publicKey, privateKey };
   }
 
-  getKeyPair(account?: number, index?: number, chain: Chain = 0): KeyPair {
+  getKeyPair(account?: number, index?: number, chain: Chain = 0) {
     let key: Uint8Array;
     if (typeof account == 'number' && typeof index === 'number') {
       key = this.getAccountChildKey(account, index, chain);
@@ -121,41 +130,43 @@ export class BigChainWallet {
     return this.getKeyPairFromDerivedKey(key);
   }
 
-  getPublicKey(account?: number, output?: KeyOutput) {
-    return this.getKeyPair(account).publicKey(output);
+  getPublicKey<K extends keyof KeyEncodingMap = 'default'>(account?: number, encoding?: K) {
+    return this.getKeyPair(account).publicKey<K>(encoding);
   }
 
-  getPrivateKey(account?: number, output?: KeyOutput) {
-    return this.getKeyPair(account).privateKey(output);
+  getPrivateKey<K extends keyof KeyEncodingMap = 'default'>(account?: number, encoding?: K) {
+    return this.getKeyPair(account).privateKey<K>(encoding);
   }
 
-  getFullPrivateKey(account?: number, output?: KeyOutput) {
-    const privKey = this.getKeyPair(account).privateKey() as Uint8Array;
-    const pubKey = this.getKeyPair(account).publicKey() as Uint8Array;
+  getFullPrivateKey<K extends keyof KeyEncodingMap = 'default'>(account?: number, encoding?: K) {
+    const privKey = this.getKeyPair(account).privateKey();
+    const pubKey = this.getKeyPair(account).publicKey();
     const key = new Uint8Array(privKey.length + pubKey.length);
     key.set(privKey);
     key.set(pubKey, privKey.length);
-    // const key = Buffer.concat([privKey, pubKey], privKey.length + pubKey.length);
-    return keyFactory(key, output, 'secret');
+    return this.encodeKey<K>(key, encoding, 'secret');
   }
 
   getDHKeyPair(account?: number): KeyPair {
     const keyPair = this.getKeyPair(account);
-    const publicKeyBuffer = convertPublicKey(keyPair.publicKey() as Uint8Array);
-    const privateKeyBuffer = convertPrivateKey(keyPair.privateKey() as Uint8Array);
-    const publicKey = (output?: KeyOutput) => keyFactory(publicKeyBuffer, output);
-    const privateKey = (output?: KeyOutput) => keyFactory(privateKeyBuffer, output, 'secret');
+    const publicKeyBuffer = convertPublicKey(keyPair.publicKey());
+    const privateKeyBuffer = convertPrivateKey(keyPair.privateKey());
+
+    const publicKey = <K extends keyof KeyEncodingMap = 'default'>(encoding?: K) =>
+      this.encodeKey(publicKeyBuffer, encoding);
+    const privateKey = <K extends keyof KeyEncodingMap = 'default'>(encoding?: K) =>
+      this.encodeKey(privateKeyBuffer, encoding, 'secret');
     return { publicKey, privateKey };
   }
 
-  getDHPublicKey(account?: number, output?: KeyOutput) {
-    const publicKeyBuffer = convertPublicKey(this.getKeyPair(account).publicKey() as Uint8Array);
-    return keyFactory(publicKeyBuffer, output);
+  getDHPublicKey<K extends keyof KeyEncodingMap = 'default'>(account?: number, encoding?: K) {
+    const publicKeyBuffer = convertPublicKey(this.getKeyPair(account).publicKey());
+    return this.encodeKey<K>(publicKeyBuffer, encoding);
   }
 
-  getDHPrivateKey(account?: number, output?: KeyOutput) {
+  getDHPrivateKey<K extends keyof KeyEncodingMap = 'default'>(account?: number, encoding?: K) {
     const privateKeyBuffer = convertPrivateKey(this.getFullPrivateKey(account) as Uint8Array);
-    return keyFactory(privateKeyBuffer, output);
+    return this.encodeKey<K>(privateKeyBuffer, encoding);
   }
 
   signTransaction() {
@@ -168,7 +179,7 @@ export class BigChainWallet {
     ) {
       // TODO: retrieve proper key based on input, transaction ?
       //! cast cheat due to crypto-conditions
-      const privateKeyBuffer = self.getPrivateKey() as string;
+      const privateKeyBuffer = (self.getPrivateKey() as unknown) as string;
       const ed25519Fulfillment = new Ed25519Sha256();
       ed25519Fulfillment.sign(Buffer.from(transactionHash, 'hex'), privateKeyBuffer);
       const fulfillmentUri = ed25519Fulfillment.serializeUri();
