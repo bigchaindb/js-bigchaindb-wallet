@@ -1,6 +1,6 @@
 {
   "name": "@s1seven/js-bigchaindb-key-derivation",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Key derivation for BigChainDB",
   "keywords": [
     "bigchain",
