@@ -44,5 +44,6 @@
     "@s1seven/js-bigchaindb-wallet-types": "^0.0.1",
     "tweetnacl": "^1.0.3",
     "tweetnacl-util": "^0.15.1"
-  }
+  },
+  "gitHead": "d2545b2483b5cd2ce16175947a55f66c51c42690"
 }

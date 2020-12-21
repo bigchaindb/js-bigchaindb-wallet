@@ -44,6 +44,7 @@
   "dependencies": {
     "@s1seven/js-bigchaindb-key-derivation": "^0.0.1",
     "@s1seven/js-bigchaindb-wallet-types": "^0.0.1",
-    "jwt-ed25519-tn": "getlarge/jsonwebtoken-ed25519-tn"
-  }
+    "jwt-ed25519-tn": "git+https://github.com/getlarge/jsonwebtoken-ed25519-tn.git"
+  },
+  "gitHead": "d2545b2483b5cd2ce16175947a55f66c51c42690"
 }
