@@ -147,8 +147,8 @@ export class BigChainWallet {
     return this.encodeKey<K>(key, encoding, 'secret');
   }
 
-  getDHKeyPair(account?: number): KeyPair {
-    const keyPair = this.getKeyPair(account);
+  getDHKeyPair(account?: number, index?: number, chain: Chain = 0): KeyPair {
+    const keyPair = this.getKeyPair(account, index, chain);
     const publicKeyBuffer = convertPublicKey(keyPair.publicKey());
     const privateKeyBuffer = convertPrivateKey(keyPair.privateKey());
 
