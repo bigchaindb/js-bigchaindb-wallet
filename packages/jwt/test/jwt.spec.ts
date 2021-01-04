@@ -2,11 +2,20 @@ import { BigChainWallet } from '@s1seven/js-bigchaindb-key-derivation';
 import { AsymmetricCipher, SymmetricCipher } from '@s1seven/js-bigchaindb-wallet-plugins';
 import { TokenService } from '../src';
 
+const createTokenService = () => {
+  const mnemonic = BigChainWallet.createMnemonic();
+  const seed = BigChainWallet.createSeed(mnemonic);
+  return TokenService.fromSeed(seed);
+};
+
+type TokenPayload = {
+  claim: string;
+  randomData?: string;
+};
+
 describe('TokenService', function () {
   it('Should throw error if no cipher is assigned', async () => {
-    const mnemonic = BigChainWallet.createMnemonic();
-    const seed = BigChainWallet.createSeed(mnemonic);
-    const tokenService = TokenService.fromSeed(seed);
+    const tokenService = createTokenService();
     const claim = 'myclaim';
     await expect(
       async () =>
@@ -17,16 +26,10 @@ describe('TokenService', function () {
   });
 
   it('Should sign - verify a token using symmetric cipher for encrypt/decrypt', async () => {
-    const mnemonic = BigChainWallet.createMnemonic();
-    const seed = BigChainWallet.createSeed(mnemonic);
+    const tokenService = createTokenService();
     const secret = SymmetricCipher.createSecret();
-    const tokenService = TokenService.fromSeed(seed);
     tokenService.cipher = new SymmetricCipher(secret);
 
-    type TokenPayload = {
-      claim: string;
-      randomData: string;
-    };
     const claim = 'myclaim';
     const encryptedToken = await tokenService.produce<TokenPayload>({
       claim,
@@ -37,16 +40,11 @@ describe('TokenService', function () {
   });
 
   it('Should sign - verify a token using asymmetric cipher for encrypt/decrypt', async () => {
-    const mnemonic = BigChainWallet.createMnemonic();
-    const seed = BigChainWallet.createSeed(mnemonic);
+    const tokenService = createTokenService();
     const keyPairA = AsymmetricCipher.createKeyPair();
     const keyPairB = AsymmetricCipher.createKeyPair();
-    const tokenService = TokenService.fromSeed(seed);
     tokenService.cipher = new AsymmetricCipher(keyPairA.secretKey, keyPairB.publicKey);
 
-    type TokenPayload = {
-      claim: string;
-    };
     const claim = 'myclaim';
     const encryptedToken = await tokenService.produce<TokenPayload>({
       claim,
@@ -54,5 +52,45 @@ describe('TokenService', function () {
     // tokenService.cipher = new AsymmetricCipher(keyPairB.secretKey, keyPairA.publicKey);
     const payload = await tokenService.consume<TokenPayload>(encryptedToken);
     expect(payload.claim).toEqual(claim);
+  });
+
+  it('Should sign - verify a token using sign / verify options', async () => {
+    const tokenService = createTokenService();
+    const secret = SymmetricCipher.createSecret();
+    tokenService.cipher = new SymmetricCipher(secret);
+
+    const claim = 'myclaim';
+    const options = { issuer: 'test_issuer' };
+    const encryptedToken = await tokenService.produce<TokenPayload>(
+      {
+        claim,
+        randomData: 'test',
+      },
+      options,
+    );
+    const decryptedJWT = await tokenService.decrypt(encryptedToken);
+    const decodedToken = tokenService.decode(decryptedJWT.jwt);
+    expect(decodedToken.payload.iss).toEqual(options.issuer);
+
+    const payload = await tokenService.consume<TokenPayload>(encryptedToken, options);
+    expect(payload.claim).toEqual(claim);
+  });
+
+  it('Should throw an error during verification when a token uses invalid issuer', async () => {
+    const tokenService = createTokenService();
+    const secret = SymmetricCipher.createSecret();
+    tokenService.cipher = new SymmetricCipher(secret);
+
+    const claim = 'myclaim';
+    const encryptedToken = await tokenService.produce<TokenPayload>(
+      {
+        claim,
+        randomData: 'test',
+      },
+      { issuer: 'invalid_issuer' },
+    );
+    await expect(
+      async () => await tokenService.consume<TokenPayload>(encryptedToken, { issuer: 'test_issuer' }),
+    ).rejects.toThrow(new Error('jwt issuer invalid. expected: test_issuer'));
   });
 });
