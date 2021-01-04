@@ -9,6 +9,19 @@ const INVALID_CIPHER = 'Invalid cipher (must be type symmetric or asymmetric)';
 const MISSING_CIPHER_INSTANCE = 'Register a cipher before calling this method';
 const MISSING_KEY = 'Missing key (should have publicKey and privateKey)';
 
+export type Algorithm =
+  | 'RS256'
+  | 'RS384'
+  | 'RS512'
+  | 'ES256'
+  | 'ES384'
+  | 'ES512'
+  | 'HS256'
+  | 'HS384'
+  | 'HS512'
+  | 'Ed25519'
+  | 'none';
+
 export type Verification = {
   iat: number;
   iss: string;
@@ -20,30 +33,44 @@ export type Verification = {
   [key: string]: any;
 };
 
+export type VerificationOptions = {
+  algorithm?: Algorithm;
+  // timestamp in seconds
+  clockTimestamp?: number;
+  ignoreNotBefore?: boolean;
+  clockTolerance?: number;
+  ignoreExpiration?: boolean;
+  audience?: string | string[];
+  issuer?: string;
+  subject?: string;
+  jwtid?: string;
+  maxAge?: string | number;
+  [key: string]: any;
+};
+
 export type SignOptions = {
   subject?: string;
   issuer?: string;
   expiresIn?: number | string;
   notBefore?: number | string;
   audience?: string | string[];
-  algorithm?:
-    | 'RS256'
-    | 'RS384'
-    | 'RS512'
-    | 'ES256'
-    | 'ES384'
-    | 'ES512'
-    | 'HS256'
-    | 'HS384'
-    | 'HS512'
-    | 'Ed25519'
-    | 'none';
+  algorithm?: Algorithm;
   header?: Record<string, unknown>;
   encoding?: string;
   jwtid?: string;
   noTimestamp?: boolean;
   keyid?: string;
   mutatePayload?: boolean;
+};
+
+export type DecodedToken<T = Record<string, unknown>> = {
+  headers: {
+    alg: string;
+    type: string;
+    [key: string]: string;
+  };
+  payload: T & Verification;
+  signature: string;
 };
 
 export type BaseTokenPayload = {
@@ -128,7 +155,7 @@ export class TokenService {
   sign<T = Record<string, unknown>>(payload: T, options: SignOptions = {}): string {
     const { subject = 'transaction', issuer = this.issuer } = options;
     //? TODO: use keyid field to match specific algorithm
-    return sign(payload, { key: this._privateKey, algorithm: this.algorithm }, { ...options, issuer, subject });
+    return sign(payload, { key: this._privateKey, algorithm: this.algorithm }, { issuer, subject, ...options });
   }
 
   async encrypt<T = BaseTokenPayload>(payload: T) {
@@ -147,8 +174,8 @@ export class TokenService {
     return this.encrypt<BaseTokenPayload>({ jwt });
   }
 
-  decode<T = Record<string, unknown>>(jwt: string): T & Verification {
-    return decode(jwt, { complete: true }) as T & Verification;
+  decode<T = Record<string, unknown>>(jwt: string): DecodedToken<T> {
+    return decode(jwt, { complete: true }) as DecodedToken<T>;
   }
 
   async decrypt<T = BaseTokenPayload>(encryptedPayload: string): Promise<T> {
@@ -161,18 +188,19 @@ export class TokenService {
     throw new Error(INVALID_CIPHER);
   }
 
-  async verify<T = Record<string, unknown>>(jwt: string): Promise<Verification & T> {
+  async verify<T = Record<string, unknown>>(jwt: string, options: VerificationOptions = {}): Promise<Verification & T> {
     return new Promise((resolve, reject) => {
       verify(
         jwt,
         { key: this._publicKey, algorithm: this.algorithm },
+        options,
         (err: typeof JsonWebTokenError, res: T & Verification) => (err ? reject(err) : resolve(res)),
       );
     });
   }
 
-  async consume<T = Record<string, unknown>>(encryptedJwt: string) {
+  async consume<T = Record<string, unknown>>(encryptedJwt: string, options?: VerificationOptions) {
     const { jwt } = await this.decrypt<BaseTokenPayload>(encryptedJwt);
-    return this.verify<T>(jwt);
+    return this.verify<T>(jwt, options);
   }
 }
