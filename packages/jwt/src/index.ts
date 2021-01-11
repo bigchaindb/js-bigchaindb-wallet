@@ -87,8 +87,8 @@ export class TokenService {
 
   static fromSeed(seed: string | Buffer, accountIndex?: number) {
     const wallet = BigChainWallet.fromSeed(seed);
-    const keyPair = wallet.getKeyPair(accountIndex);
-    const privateKey = wallet.getFullPrivateKey(accountIndex, 'buffer');
+    const keyPair = wallet.getDerivedKeyPair('sign', { account: accountIndex });
+    const privateKey = keyPair.fullPrivateKey('buffer');
     const publicKey = keyPair.publicKey('buffer');
     return new TokenService({ publicKey, privateKey });
   }
