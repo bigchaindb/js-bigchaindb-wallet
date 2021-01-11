@@ -13,32 +13,32 @@ describe('BigChainWallet', () => {
   describe('fromMnemonic', () => {
     it('creates wallet from mnemonic with defaults', () => {
       const wallet = BigChainWallet.fromMnemonic(MNEMONIC_ENGLISH);
-      expect(wallet.getPublicKey(0, 'base58')).toEqual(FROM_MNEMONIC_ENGLISH_PUBLIC_KEY_0);
-      expect(wallet.getPrivateKey(0, 'base58')).toEqual(FROM_MNEMONIC_ENGLISH_SECRET_KEY_0);
+      expect(wallet.getDerivedPublicKey('sign', { account: 0 }, 'base58')).toEqual(FROM_MNEMONIC_ENGLISH_PUBLIC_KEY_0);
+      expect(wallet.getDerivedPrivateKey('sign', { account: 0 }, 'base58')).toEqual(FROM_MNEMONIC_ENGLISH_SECRET_KEY_0);
     });
 
     it('creates wallet from mnemonic with specific language', () => {
       const expectedPublic = '2bvbLAMa9LfqhFYYe1Z1UuWMfyz85AvBCgDEHfJvvhpm';
       const expectedPrivateKey = 'DuSEXvGzetvccnQ3s3i38hkbWTBW7C5Ge3uHcFWBiXGR';
       const wallet = BigChainWallet.fromMnemonic(MNEMONIC_FRENCH, undefined, 'french');
-      expect(wallet.getPublicKey(0, 'base58')).toEqual(expectedPublic);
-      expect(wallet.getPrivateKey(0, 'base58')).toEqual(expectedPrivateKey);
+      expect(wallet.getDerivedPublicKey('sign', { account: 0 }, 'base58')).toEqual(expectedPublic);
+      expect(wallet.getDerivedPrivateKey('sign', { account: 0 }, 'base58')).toEqual(expectedPrivateKey);
     });
 
     it('creates wallet from mnemonic with password', () => {
       const expectedPublic = '4q8r4XZHQnVWStT9Dqcu5ZgAGWeifvi2tgHyRQn9D6ph';
       const expectedPrivateKey = 'DeGbUWgb3bhk4XEWtaZxyPgmsBoE5vvGugCapHVmnNpK';
       const wallet = BigChainWallet.fromMnemonic(MNEMONIC_ENGLISH, 'password');
-      expect(wallet.getPublicKey(0, 'base58')).toEqual(expectedPublic);
-      expect(wallet.getPrivateKey(0, 'base58')).toEqual(expectedPrivateKey);
+      expect(wallet.getDerivedPublicKey('sign', { account: 0 }, 'base58')).toEqual(expectedPublic);
+      expect(wallet.getDerivedPrivateKey('sign', { account: 0 }, 'base58')).toEqual(expectedPrivateKey);
     });
 
     it('creates wallet from mnemonic with password AND specific language', () => {
       const expectedPublic = 'FwHieS1ZR2KbYv3cXwp4QwcbB6vYA7w26GXocFSYBr2m';
       const expectedPrivateKey = 'RZKRJr7fYqfnd3QprMcVDbaMAbHxF8SNmmCrTKVjAqu';
       const wallet = BigChainWallet.fromMnemonic(MNEMONIC_FRENCH, 'motdepasse', 'french');
-      expect(wallet.getPublicKey(0, 'base58')).toEqual(expectedPublic);
-      expect(wallet.getPrivateKey(0, 'base58')).toEqual(expectedPrivateKey);
+      expect(wallet.getDerivedPublicKey('sign', { account: 0 }, 'base58')).toEqual(expectedPublic);
+      expect(wallet.getDerivedPrivateKey('sign', { account: 0 }, 'base58')).toEqual(expectedPrivateKey);
     });
 
     const expectInvalidMnemonicFailure = (mnemonic?: string, password?: string, language?: string) => {
@@ -65,15 +65,15 @@ describe('BigChainWallet', () => {
     it('creates wallet from seed hex string', () => {
       const seedHex = BigChainWallet.createSeed(MNEMONIC_ENGLISH).toString('hex');
       const wallet = BigChainWallet.fromSeed(seedHex);
-      expect(wallet.getPublicKey(0, 'base58')).toEqual(FROM_MNEMONIC_ENGLISH_PUBLIC_KEY_0);
-      expect(wallet.getPrivateKey(0, 'base58')).toEqual(FROM_MNEMONIC_ENGLISH_SECRET_KEY_0);
+      expect(wallet.getDerivedPublicKey('sign', { account: 0 }, 'base58')).toEqual(FROM_MNEMONIC_ENGLISH_PUBLIC_KEY_0);
+      expect(wallet.getDerivedPrivateKey('sign', { account: 0 }, 'base58')).toEqual(FROM_MNEMONIC_ENGLISH_SECRET_KEY_0);
     });
 
     it('creates wallet from seed Buffer', () => {
       const seedBuffer = BigChainWallet.createSeed(MNEMONIC_ENGLISH);
       const wallet = BigChainWallet.fromSeed(seedBuffer);
-      expect(wallet.getPublicKey(0, 'base58')).toEqual(FROM_MNEMONIC_ENGLISH_PUBLIC_KEY_0);
-      expect(wallet.getPrivateKey(0, 'base58')).toEqual(FROM_MNEMONIC_ENGLISH_SECRET_KEY_0);
+      expect(wallet.getDerivedPublicKey('sign', { account: 0 }, 'base58')).toEqual(FROM_MNEMONIC_ENGLISH_PUBLIC_KEY_0);
+      expect(wallet.getDerivedPrivateKey('sign', { account: 0 }, 'base58')).toEqual(FROM_MNEMONIC_ENGLISH_SECRET_KEY_0);
     });
   });
 
