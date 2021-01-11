@@ -5,9 +5,21 @@
 
 This repository contains a suite of components and modules to ease the creation of wallets for BigChainDB.
 
-### List of packages
+## List of packages
 
 - [Key-Derivation](https://github.com/s1seven/js-bigchaindb-wallet/tree/master/packages/key-derivation#readme)
 - [Plugins](https://github.com/s1seven/js-bigchaindb-wallet/tree/master/packages/plugins#readme)
 - [Types](https://github.com/s1seven/js-bigchaindb-wallet/tree/master/packages/types#readme)
 - [JWT](https://github.com/s1seven/js-bigchaindb-wallet/tree/master/packages/jwt#readme)
+
+## TODOs
+
+- Implement Key-store package
+
+  - Store encrypted seeds + derivated full privateKey + transactions linked to derivated publicKey
+
+  - support attachement of default | custom encryption plugin (following the plugins API)
+
+  - support attachement of default | custom storage (create default : LocalStorage for browser and MemoryStorage + FileStorage for node)
+
+  - allow encrypted file export ( encrypted using custom secret key ? )
