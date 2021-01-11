@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.5](https://github.com/s1seven/js-bigchaindb-wallet/compare/@s1seven/js-bigchaindb-key-derivation@0.0.4...@s1seven/js-bigchaindb-key-derivation@0.0.5) (2021-01-11)
+
+
+### Bug Fixes
+
+* import issues ([8aeefc5](https://github.com/s1seven/js-bigchaindb-wallet/commit/8aeefc5da334fb2181f2fd51c10cb2b7a85c29a9))
+* update gitHead ([2d651c2](https://github.com/s1seven/js-bigchaindb-wallet/commit/2d651c2231c705a1a5d8209afc9795950e6a4973))
+
+
+
+
+
 ## [0.0.4](https://github.com/s1seven/js-bigchaindb-wallet/compare/@s1seven/js-bigchaindb-key-derivation@0.0.3...@s1seven/js-bigchaindb-key-derivation@0.0.4) (2021-01-11)
 
 **Note:** Version bump only for package @s1seven/js-bigchaindb-key-derivation
