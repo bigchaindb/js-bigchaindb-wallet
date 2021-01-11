@@ -46,5 +46,5 @@
     "@s1seven/js-bigchaindb-wallet-types": "^0.0.3",
     "jwt-ed25519-tn": "git+https://github.com/getlarge/jsonwebtoken-ed25519-tn.git"
   },
-  "gitHead": "d2545b2483b5cd2ce16175947a55f66c51c42690"
+  "gitHead": "b16cc42e43fe9130f2f5b06efd22cb660a155423"
 }
