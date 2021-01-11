@@ -1,5 +1,5 @@
 import * as base58 from 'bs58';
-import * as ed2curve from 'ed2curve';
+import { KeyEncodingMap } from 'key-derivation/dist';
 import { encodeBase64 } from 'tweetnacl-util';
 
 export function bufferToUint8Array(buffer: Buffer) {
@@ -27,14 +27,20 @@ export function uint8ArrayToHexString(byteArray: Uint8Array): string {
     .join('');
 }
 
-export type KeyEncodingMap = {
-  hex: () => string;
-  base58: () => string;
-  base64: () => string;
-  buffer: () => Buffer;
-  pem: () => string;
-  default: () => Uint8Array;
-};
+export const derivationPathRegex = new RegExp("^m(\\/[0-9]+')+$");
+
+export const replaceDerive = (val: string) => val.replace("'", '');
+
+export function isValidDerivationPath(path: string) {
+  if (!derivationPathRegex.test(path)) {
+    return false;
+  }
+  return !path
+    .split('/')
+    .slice(1)
+    .map(replaceDerive)
+    .some((val) => isNaN(parseInt(val, 10)));
+}
 
 export function encodeKey<K extends keyof KeyEncodingMap>(
   key: Uint8Array,
@@ -50,20 +56,4 @@ export function encodeKey<K extends keyof KeyEncodingMap>(
     default: () => key,
   };
   return keyEncodingMap[output]() as ReturnType<KeyEncodingMap[K]>;
-}
-
-export function convertPublicKey(publicKey: Uint8Array): Uint8Array {
-  return ed2curve.convertPublicKey(publicKey);
-}
-
-export function convertPrivateKey(privateKey: Uint8Array): Uint8Array {
-  return ed2curve.convertSecretKey(privateKey);
-}
-
-export function convertKeyPair(keyPair: {
-  publicKey: Uint8Array;
-  privateKey: Uint8Array;
-}): { publicKey: Uint8Array; privateKey: Uint8Array } {
-  const { publicKey, privateKey } = keyPair;
-  return { publicKey: convertPublicKey(publicKey), privateKey: convertPrivateKey(privateKey) };
 }
