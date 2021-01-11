@@ -158,7 +158,7 @@ export class TokenService {
     return sign(payload, { key: this._privateKey, algorithm: this.algorithm }, { issuer, subject, ...options });
   }
 
-  async encrypt<T = BaseTokenPayload>(payload: T) {
+  async encrypt<T = BaseTokenPayload>(payload: T): Promise<string> {
     this.validateCipher();
     if (this.cipher.type === 'asymmetric') {
       return this.cipher.encrypt<T>(payload, this.cipher.sharedKey);
@@ -168,7 +168,7 @@ export class TokenService {
     throw new Error(INVALID_CIPHER);
   }
 
-  async produce<T = Record<string, unknown>>(payload: T, options?: SignOptions) {
+  async produce<T = Record<string, unknown>>(payload: T, options?: SignOptions): Promise<string> {
     this.validateCipher();
     const jwt = this.sign<T>(payload, options);
     return this.encrypt<BaseTokenPayload>({ jwt });
@@ -199,7 +199,10 @@ export class TokenService {
     });
   }
 
-  async consume<T = Record<string, unknown>>(encryptedJwt: string, options?: VerificationOptions) {
+  async consume<T = Record<string, unknown>>(
+    encryptedJwt: string,
+    options?: VerificationOptions,
+  ): Promise<Verification & T> {
     const { jwt } = await this.decrypt<BaseTokenPayload>(encryptedJwt);
     return this.verify<T>(jwt, options);
   }
