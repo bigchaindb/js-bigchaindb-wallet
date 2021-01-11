@@ -1,6 +1,5 @@
 import { createHmac } from 'crypto';
-import { Chain } from 'key-derivation/dist';
-import { DerivedKeyPair } from './types';
+import { Chain, DerivedKeyPair } from './types';
 import { bufferToUint8Array, isValidDerivationPath, replaceDerive } from './utils';
 
 const INVALID_DERIVATION_PATH = 'Invalid derivation path';

@@ -1,5 +1,5 @@
 import * as base58 from 'bs58';
-import { KeyEncodingMap } from 'key-derivation/dist';
+import { KeyEncodingMap } from './types';
 import { encodeBase64 } from 'tweetnacl-util';
 
 export function bufferToUint8Array(buffer: Buffer) {
