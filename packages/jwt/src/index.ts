@@ -25,8 +25,8 @@ export type Algorithm =
 export type Verification = {
   iat: number;
   iss: string;
-  nbf?: any;
-  exp?: any;
+  nbf?: number;
+  exp?: number;
   aud?: string;
   jti?: string;
   sub?: string;
