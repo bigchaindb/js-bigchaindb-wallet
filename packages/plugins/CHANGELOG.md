@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0](https://github.com/s1seven/js-bigchaindb-wallet/compare/@s1seven/js-bigchaindb-wallet-plugins@0.0.3...@s1seven/js-bigchaindb-wallet-plugins@0.1.0) (2021-01-15)
+
+
+### Features
+
+* add sign plugin ([903a7c4](https://github.com/s1seven/js-bigchaindb-wallet/commit/903a7c405d1505dbaf99e797f322e03927e9f56e))
+
+
+
+
+
 ## [0.0.3](https://github.com/s1seven/js-bigchaindb-wallet/compare/@s1seven/js-bigchaindb-wallet-plugins@0.0.2...@s1seven/js-bigchaindb-wallet-plugins@0.0.3) (2021-01-04)
 
 **Note:** Version bump only for package @s1seven/js-bigchaindb-wallet-plugins

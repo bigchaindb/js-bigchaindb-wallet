@@ -1,6 +1,6 @@
 {
   "name": "@s1seven/js-bigchaindb-wallet-plugins",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Plugins for BigChainDB wallet",
   "keywords": [
     "bigchain",
