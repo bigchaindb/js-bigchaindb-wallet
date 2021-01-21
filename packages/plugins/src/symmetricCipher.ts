@@ -6,6 +6,8 @@ export class SymmetricCipher implements Cipher {
   name: 'NACLSECRETBOX';
   type: CipherType = 'symmetric';
   secret: Uint8Array;
+  readonly nonceLength = secretbox.nonceLength;
+  readonly keyLength = secretbox.keyLength;
 
   static newNonce() {
     return randomBytes(secretbox.nonceLength);

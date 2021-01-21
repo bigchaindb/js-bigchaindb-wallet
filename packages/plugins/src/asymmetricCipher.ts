@@ -6,6 +6,9 @@ export class AsymmetricCipher implements Cipher {
   name: 'NACLBOX';
   type: CipherType = 'asymmetric';
   sharedKey: Uint8Array;
+  readonly nonceLength = box.nonceLength;
+  readonly secretKeyLength = box.secretKeyLength;
+  readonly sharedKeyLength = box.sharedKeyLength;
 
   static createKeyPair() {
     return box.keyPair();
