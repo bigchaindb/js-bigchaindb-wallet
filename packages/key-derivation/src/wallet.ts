@@ -1,4 +1,4 @@
-import * as bip39 from 'bip39';
+import { generateMnemonic, mnemonicToSeedSync, validateMnemonic, wordlists } from 'bip39';
 import { Ed25519Sha256 } from 'crypto-conditions';
 import { EncryptKeyPair } from './encrypt-key-pair';
 import { HARDENED_OFFSET, KeyDerivation } from './key-derivation';
@@ -30,29 +30,29 @@ export class BigChainWallet {
     language = 'english',
     rngFn?: (size: number) => Buffer | undefined,
   ): string {
-    if (language && !Object.prototype.hasOwnProperty.call(bip39.wordlists, language)) {
+    if (language && !Object.prototype.hasOwnProperty.call(wordlists, language)) {
       throw new TypeError(INVALID_LANGUAGE(language));
     }
-    const wordlist = bip39.wordlists[language];
-    return bip39.generateMnemonic(strength || ENTROPY_BITS, rngFn, wordlist);
+    const wordlist = wordlists[language];
+    return generateMnemonic(strength || ENTROPY_BITS, rngFn, wordlist);
   }
 
   static validateMnemonic(mnemonic: string, language = 'english'): boolean {
-    if (language && !Object.prototype.hasOwnProperty.call(bip39.wordlists, language)) {
+    if (language && !Object.prototype.hasOwnProperty.call(wordlists, language)) {
       throw new TypeError(INVALID_LANGUAGE(language));
     }
     if (mnemonic?.trim().split(/\s+/g).length < 12) {
       return false;
     }
-    const wordlist = bip39.wordlists[language];
-    return bip39.validateMnemonic(mnemonic, wordlist);
+    const wordlist = wordlists[language];
+    return validateMnemonic(mnemonic, wordlist);
   }
 
   static createSeed(mnemonic: string, password: string = undefined, language = 'english'): Buffer {
     if (!BigChainWallet.validateMnemonic(mnemonic, language)) {
       throw new Error(INVALID_MNEMONIC);
     }
-    return bip39.mnemonicToSeedSync(mnemonic, password);
+    return mnemonicToSeedSync(mnemonic, password);
   }
 
   static fromMnemonic(mnemonic: string, password: string = undefined, language = 'english'): BigChainWallet {
@@ -100,8 +100,8 @@ export class BigChainWallet {
     derivedKeyPair: DerivedKeyPair,
   ): ReturnType<DerivationKeyPairMap[P]> {
     const derivationKeyPairMap: DerivationKeyPairMap = {
-      sign: () => new SignKeyPair(derivedKeyPair).factory(),
-      encrypt: () => new EncryptKeyPair(derivedKeyPair).factory(),
+      sign: () => SignKeyPair.fromDerivedKeyPair(derivedKeyPair).factory(),
+      encrypt: () => EncryptKeyPair.fromDerivedKeyPair(derivedKeyPair).factory(),
     };
     return derivationKeyPairMap[type]() as ReturnType<DerivationKeyPairMap[P]>;
   }

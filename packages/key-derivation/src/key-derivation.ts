@@ -3,16 +3,25 @@ import { Chain, DerivedKeyPair } from './types';
 import { bufferToUint8Array, isValidDerivationPath, replaceDerive } from './utils';
 
 const INVALID_DERIVATION_PATH = 'Invalid derivation path';
+const INVALID_LENGTH = (el: string, length: number) => `${el} should be ${length} bytes length`;
 const ED25519_CURVE = 'ed25519 seed';
 
 export const BIG_CHAIN_DERIVATION_PATH = `m/44'/822'`;
 export const HARDENED_OFFSET = 0x80000000;
 
 export class KeyDerivation {
+  static readonly keyLength = 32;
+  static readonly seedLength = 64;
+  static readonly chainCodeLength = 32;
+
   private _seedHex: string;
 
   static getMasterKeyFromSeed(seed: string, encoding: BufferEncoding = 'hex'): DerivedKeyPair {
     const hmac = createHmac('sha512', ED25519_CURVE);
+    const seedBuffer = Buffer.from(seed, encoding);
+    if (seedBuffer.length !== this.seedLength) {
+      throw new TypeError(INVALID_LENGTH('Seed', this.seedLength));
+    }
     const I = hmac.update(Buffer.from(seed, encoding)).digest();
     const IL = I.slice(0, 32);
     const IR = I.slice(32);
@@ -25,6 +34,12 @@ export class KeyDerivation {
 
   static childKeyDerivation(parentKeys: DerivedKeyPair, index: number): DerivedKeyPair {
     const { key, chainCode, derivationPath } = parentKeys;
+    if (key.length !== this.keyLength) {
+      throw new TypeError(INVALID_LENGTH('Key', this.keyLength));
+    }
+    if (chainCode.length !== this.chainCodeLength) {
+      throw new TypeError(INVALID_LENGTH('ChainCode', this.chainCodeLength));
+    }
     const indexBuffer = Buffer.allocUnsafe(4);
     indexBuffer.writeUInt32BE(index, 0);
     const data = Buffer.concat([Buffer.alloc(1, 0), key, indexBuffer]);
@@ -67,7 +82,7 @@ export class KeyDerivation {
     return KeyDerivation.derivePath(derivationPath, this._seedHex);
   }
 
-  getBaseKey() {
+  getBaseKey(): DerivedKeyPair {
     return this.derive(`${BIG_CHAIN_DERIVATION_PATH}`);
   }
 
