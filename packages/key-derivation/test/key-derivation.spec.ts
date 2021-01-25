@@ -48,23 +48,137 @@ const specTestCase = (num: number) => () => {
         seedHex,
       );
 
-      assertChildKeypair(derivedChildSignKeyPair, new SignKeyPair(expectedChildKeyPair));
-      assertChildKeypair(derivedChildEncryptKeyPair, new EncryptKeyPair(expectedChildKeyPair));
+      assertChildKeypair(derivedChildSignKeyPair, SignKeyPair.fromDerivedKeyPair(expectedChildKeyPair));
+      assertChildKeypair(derivedChildEncryptKeyPair, EncryptKeyPair.fromDerivedKeyPair(expectedChildKeyPair));
     });
   });
 
+  it('should throw a type error when creating key pair with no public key', () => {
+    expect(() => new SignKeyPair({})).toThrow(new TypeError('The "publicKey" property is required.'));
+    expect(() => new EncryptKeyPair({})).toThrow(new TypeError('The "publicKey" property is required.'));
+  });
+
+  it('should throw a type error when creating key pair from invalid derived key pair', () => {
+    const invalidChainCode = new Uint8Array();
+    const invalidKey = new Uint8Array();
+    const derivationPath = `${BIG_CHAIN_DERIVATION_PATH}/${0}'/${0}'/0'`;
+    expect(() =>
+      SignKeyPair.fromDerivedKeyPair({ key: invalidKey, chainCode: invalidChainCode, derivationPath }),
+    ).toThrow(new TypeError(`Key should be ${KeyDerivation.keyLength} bytes length`));
+
+    expect(() =>
+      EncryptKeyPair.fromDerivedKeyPair({ key: invalidKey, chainCode: invalidChainCode, derivationPath }),
+    ).toThrow(new TypeError(`Key should be ${KeyDerivation.keyLength} bytes length`));
+  });
+
+  it('should throw a type error when creating encrypt key pair from invalid sign key pair', () => {
+    const signKeyPair = new SignKeyPair({ publicKey: new Uint8Array() });
+    expect(() => EncryptKeyPair.fromSignKeyPair(signKeyPair)).toThrow(
+      new TypeError(`PublicKey should be ${SignKeyPair.publicKeyLength} bytes length`),
+    );
+  });
+
+  it('should throw a type error when generating key pair from invalid secret | seed', () => {
+    const invalidSeed = 'invalid-seed';
+    const invalidSecret = 'invalid-secret';
+    expect(() => SignKeyPair.generate({ seed: invalidSeed, encoding: 'utf-8' })).toThrow(
+      new TypeError(`Seed should be ${SignKeyPair.seedLength} bytes length`),
+    );
+
+    expect(() => SignKeyPair.generate({ secretKey: invalidSecret, encoding: 'utf-8' })).toThrow(
+      new TypeError(`SecretKey should be ${SignKeyPair.fullPrivateKeyLength} bytes length`),
+    );
+
+    expect(() => EncryptKeyPair.generate({ secretKey: invalidSecret, encoding: 'utf-8' })).toThrow(
+      new TypeError(`SecretKey should be ${EncryptKeyPair.privateKeyLength} bytes length`),
+    );
+  });
+
+  it('should throw a type error when creating key pair from invalid fingerprint', () => {
+    const invalidFingerprint = 'invalid-fingerprint';
+    expect(() => SignKeyPair.fromFingerprint(invalidFingerprint)).toThrow(
+      new Error('`fingerprint` must be a multibase encoded string.'),
+    );
+    expect(() => EncryptKeyPair.fromFingerprint(invalidFingerprint)).toThrow(
+      new Error('`fingerprint` must be a multibase encoded string.'),
+    );
+  });
+
   it(`should convert Ed's signing keys to curve`, () => {
-    const signKeyPair = wallet.getDerivedKeyPair('sign');
-    const signPublicKeyHex = signKeyPair.publicKey('hex');
-    const signPrivateKeyHex = signKeyPair.privateKey('hex');
-    const encryptKeyPair = wallet.getDerivedKeyPair('encrypt');
-    const encryptPublicKeyHex = encryptKeyPair.publicKey('hex');
-    const encryptPrivateKeyHex = encryptKeyPair.privateKey('hex');
+    const signKeyPairFactory = wallet.getDerivedKeyPair('sign');
+    const signPublicKeyHex = signKeyPairFactory.publicKey('hex');
+    const signPrivateKeyHex = signKeyPairFactory.privateKey('hex');
+    const encryptKeyPairFactory = wallet.getDerivedKeyPair('encrypt');
+    const encryptPublicKeyHex = encryptKeyPairFactory.publicKey('hex');
+    const encryptPrivateKeyHex = encryptKeyPairFactory.privateKey('hex');
 
     expect(signPublicKeyHex).toEqual(testCase.conversions.sign[0]);
     expect(signPrivateKeyHex).toEqual(testCase.conversions.sign[1]);
     expect(encryptPublicKeyHex).toEqual(testCase.conversions.curve[0]);
     expect(encryptPrivateKeyHex).toEqual(testCase.conversions.curve[1]);
+  });
+
+  it(`should create key Pairs from fingerprint`, () => {
+    const signKeyPairFactory = wallet.getDerivedKeyPair('sign');
+    const signFingerprint = signKeyPairFactory.fingerprint();
+    const signKeyPair2 = SignKeyPair.fromFingerprint(signFingerprint);
+    const signFingerprintValid = SignKeyPair.verifyFingerprint(signFingerprint, signKeyPair2.getPublicKey('base58'));
+    const encryptKeyPairFactory = wallet.getDerivedKeyPair('encrypt');
+    const encryptFingerprint = encryptKeyPairFactory.fingerprint();
+    const encryptKeyPair2 = EncryptKeyPair.fromFingerprint(encryptFingerprint);
+    const encryptFingerprintValid = EncryptKeyPair.verifyFingerprint(
+      encryptFingerprint,
+      encryptKeyPair2.getPublicKey('base58'),
+    );
+
+    expect(signFingerprint).toEqual(testCase.fingerprints.sign);
+    expect(encryptFingerprint).toEqual(testCase.fingerprints.curve);
+    expect(signKeyPair2.getPublicKey('base58')).toEqual(signKeyPairFactory.publicKey('base58'));
+    expect(signFingerprintValid.valid).toBeTruthy();
+    expect(encryptKeyPair2.getPublicKey('base58')).toEqual(encryptKeyPairFactory.publicKey('base58'));
+    expect(encryptFingerprintValid.valid).toBeTruthy();
+  });
+
+  it(`should convert key Pairs to DER`, () => {
+    const signKeyPairFactory = wallet.getDerivedKeyPair('sign');
+    const signPublicKeyDer = signKeyPairFactory.publicKey('der');
+    const signPrivateKeyDer = signKeyPairFactory.privateKey('der');
+    const encryptKeyPairFactory = wallet.getDerivedKeyPair('encrypt');
+    const encryptPublicKeyDer = encryptKeyPairFactory.publicKey('der');
+    // const encryptPrivateKeyDer = encryptKeyPairFactory.privateKey('der');
+
+    expect(signPublicKeyDer.toString('hex')).toEqual(testCase.der.sign[0]);
+    expect(signPrivateKeyDer.toString('hex')).toEqual(testCase.der.sign[1]);
+    expect(encryptPublicKeyDer.toString('hex')).toEqual(testCase.der.curve[0]);
+    // expect(encryptPrivateKeyDer.toString('hex')).toEqual(testCase.der.curve[1]);
+  });
+
+  it(`should convert key Pairs to KeyObject`, () => {
+    const signKeyPairFactory = wallet.getDerivedKeyPair('sign');
+    const signPublicKeyObject = signKeyPairFactory.publicKey('keyObject');
+    const signPrivateKeyObject = signKeyPairFactory.privateKey('keyObject');
+    const encryptKeyPairFactory = wallet.getDerivedKeyPair('encrypt');
+    const encryptPublicKeyObject = encryptKeyPairFactory.publicKey('keyObject');
+    // const encryptPrivateKeyObject = encryptKeyPairFactory.privateKey('keyObject');
+
+    expect(signPublicKeyObject.type).toEqual('public');
+    expect(signPrivateKeyObject.type).toEqual('private');
+    expect(encryptPublicKeyObject.type).toEqual('public');
+    // expect(encryptPrivateKeyObject.type).toEqual('private');
+  });
+
+  it(`should convert key Pairs to PEM`, () => {
+    const signKeyPairFactory = wallet.getDerivedKeyPair('sign');
+    const signPublicKeyPem = signKeyPairFactory.publicKey('pem');
+    const signPrivateKeyPem = signKeyPairFactory.privateKey('pem');
+    const encryptKeyPairFactory = wallet.getDerivedKeyPair('encrypt');
+    const encryptPublicKeyPem = encryptKeyPairFactory.publicKey('pem');
+    // const encryptPrivateKeyPem = encryptKeyPairFactory.privateKey('pem');
+
+    expect(signPublicKeyPem).toEqual(testCase.pem.sign[0]);
+    expect(signPrivateKeyPem).toEqual(testCase.pem.sign[1]);
+    expect(encryptPublicKeyPem).toEqual(testCase.pem.curve[0]);
+    // expect(encryptPrivateKeyPem).toEqual(testCase.pem.curve[1]);
   });
 };
 

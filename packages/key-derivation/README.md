@@ -5,11 +5,16 @@ Complies to [BIP44] and [SLIP10].
 
 ## Usage
 
+### TODO: DEMONSTRATE API
+
 ```
 const BigChainWallet = require('@s1seven/js-bigchain-key-derivation');
 
-// TODO: DEMONSTRATE API
 ```
+
+## TODOs
+
+### Account discovery
 
 In an extra module ?
 
@@ -42,6 +47,10 @@ async accountDiscovery(account: number | string, index: number, attempt = 0): Pr
 
 - add third property if keypair has unspent transaction ?
 - check that previous account has transaction history
+
+### DER / KeyObject / PEM encoding
+
+- Add missing alg to export as DER/PEM/Keyobject X25519 private key
 
 [bip44]: https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
 [slip10]: https://github.com/satoshilabs/slips/blob/master/slip-0010.md

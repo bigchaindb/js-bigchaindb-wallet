@@ -3,11 +3,11 @@ import { secretbox, randomBytes } from 'tweetnacl';
 import { decodeUTF8, encodeUTF8, encodeBase64, decodeBase64 } from 'tweetnacl-util';
 
 export class SymmetricCipher implements Cipher {
-  name: 'NACLSECRETBOX';
-  type: CipherType = 'symmetric';
+  static readonly nonceLength = secretbox.nonceLength;
+  static readonly keyLength = secretbox.keyLength;
+  readonly name: 'NACLSECRETBOX';
+  readonly type: CipherType = 'symmetric';
   secret: Uint8Array;
-  readonly nonceLength = secretbox.nonceLength;
-  readonly keyLength = secretbox.keyLength;
 
   static newNonce() {
     return randomBytes(secretbox.nonceLength);

@@ -3,12 +3,13 @@ import { box, randomBytes } from 'tweetnacl';
 import { decodeUTF8, encodeUTF8, encodeBase64, decodeBase64 } from 'tweetnacl-util';
 
 export class AsymmetricCipher implements Cipher {
-  name: 'NACLBOX';
-  type: CipherType = 'asymmetric';
+  static readonly publicKeyLength = box.publicKeyLength;
+  static readonly nonceLength = box.nonceLength;
+  static readonly secretKeyLength = box.secretKeyLength;
+  static readonly sharedKeyLength = box.sharedKeyLength;
+  readonly name: 'NACLBOX';
+  readonly type: CipherType = 'asymmetric';
   sharedKey: Uint8Array;
-  readonly nonceLength = box.nonceLength;
-  readonly secretKeyLength = box.secretKeyLength;
-  readonly sharedKeyLength = box.sharedKeyLength;
 
   static createKeyPair() {
     return box.keyPair();

@@ -2,9 +2,11 @@ import { sign, SignKeyPair } from 'tweetnacl';
 import { decodeBase64 } from 'tweetnacl-util';
 
 export class Sign {
-  name: 'NACLSIGN';
-  readonly publicKeyLength = sign.publicKeyLength;
-  readonly privateKeyLength = sign.secretKeyLength;
+  static readonly publicKeyLength = sign.publicKeyLength;
+  static readonly privateKeyLength = sign.secretKeyLength;
+  static readonly signatureLength = sign.signatureLength;
+
+  readonly name: 'NACLSIGN';
   publicKey?: Uint8Array | undefined;
   privateKey?: Uint8Array | undefined;
 
