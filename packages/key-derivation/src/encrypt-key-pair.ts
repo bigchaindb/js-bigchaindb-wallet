@@ -1,6 +1,6 @@
 import * as base58 from 'bs58';
 import * as ed2curve from 'ed2curve';
-import { box } from 'tweetnacl';
+import { box, BoxKeyPair as NaclBoxKeyPair } from 'tweetnacl';
 import { KeyDerivation } from './key-derivation';
 import { SignKeyPair } from './sign-key-pair';
 import {
@@ -11,16 +11,16 @@ import {
   KeyPair,
   KeyPairDerivationOptions,
 } from './types';
-import { base58Decode, encodeKey, bufferToUint8Array } from './utils';
+import { base58Decode, encodeKey, bufferToUint8Array, toUint8Array } from './utils';
 
 const INVALID_LENGTH = (el: string, length: number) => `${el} should be ${length} bytes length`;
 
-export const SUITE_ID = 'X25519KeyAgreementKey2019';
+export const X25519_SUITE_ID = 'X25519KeyAgreementKey2019';
 
 export class EncryptKeyPair {
   static readonly publicKeyLength = box.publicKeyLength;
   static readonly privateKeyLength = box.secretKeyLength;
-  static readonly suite = SUITE_ID;
+  static readonly suite = X25519_SUITE_ID;
 
   publicKey: Uint8Array;
   privateKey?: Uint8Array;
@@ -51,8 +51,8 @@ export class EncryptKeyPair {
 
   static fromDerivedKeyPair(keyPair: DerivedKeyPair): EncryptKeyPair {
     const { chainCode, key, derivationPath } = keyPair;
-    if (!derivationPath || !(typeof derivationPath === 'string')) {
-      throw new Error('`derivationPath` must be string.');
+    if (derivationPath && !(typeof derivationPath === 'string')) {
+      throw new TypeError('`derivationPath` must be string.');
     }
     if (!key || key.length !== KeyDerivation.keyLength) {
       throw new TypeError(INVALID_LENGTH('Key', KeyDerivation.keyLength));
@@ -67,16 +67,30 @@ export class EncryptKeyPair {
     return new EncryptKeyPair({ chainCode, derivationPath, publicKey, privateKey });
   }
 
+  static fromFactory(factory: EncryptKeyPairFactory): EncryptKeyPair {
+    const { chainCode, controller, derivationPath, id, publicKey, privateKey } = factory;
+    return new EncryptKeyPair({
+      chainCode: typeof chainCode === 'function' ? chainCode() : null,
+      controller,
+      derivationPath,
+      id,
+      publicKey: publicKey(),
+      privateKey: typeof chainCode === 'function' ? privateKey() : null,
+    });
+  }
+
   static fromSignKeyPair(signKeyPair: SignKeyPair): EncryptKeyPair {
     const { chainCode, derivationPath } = signKeyPair;
-    if (!signKeyPair.fullPrivateKey || signKeyPair.fullPrivateKey.length !== SignKeyPair.fullPrivateKeyLength) {
+    if (signKeyPair.fullPrivateKey && signKeyPair.fullPrivateKey.length !== SignKeyPair.fullPrivateKeyLength) {
       throw new TypeError(INVALID_LENGTH('PrivateKey', SignKeyPair.fullPrivateKeyLength));
     }
     if (!signKeyPair.publicKey || signKeyPair.publicKey.length !== SignKeyPair.publicKeyLength) {
       throw new TypeError(INVALID_LENGTH('PublicKey', SignKeyPair.publicKeyLength));
     }
     const publicKey = EncryptKeyPair.convertPublicKeyToCurve(signKeyPair.publicKey);
-    const privateKey = EncryptKeyPair.convertPrivateKeyToCurve(signKeyPair.fullPrivateKey);
+    const privateKey = signKeyPair.fullPrivateKey
+      ? EncryptKeyPair.convertPrivateKeyToCurve(signKeyPair.fullPrivateKey)
+      : null;
     return new EncryptKeyPair({ chainCode, derivationPath, publicKey, privateKey });
   }
 
@@ -93,6 +107,25 @@ export class EncryptKeyPair {
 
     // TODO: find a way to pass derivationPath ?
     return new EncryptKeyPair({ publicKey: bufferToUint8Array(buffer.slice(2)) });
+  }
+
+  static generate(options: { secretKey?: string | Uint8Array | Buffer }): EncryptKeyPair {
+    let keyPair: NaclBoxKeyPair;
+    if (options.secretKey) {
+      const { secretKey } = options;
+      const secretKeyBytes = toUint8Array(secretKey);
+      if (!(secretKeyBytes instanceof Uint8Array && secretKeyBytes.length === this.privateKeyLength)) {
+        throw new TypeError(INVALID_LENGTH('SecretKey', this.privateKeyLength));
+      }
+      keyPair = box.keyPair.fromSecretKey(secretKeyBytes);
+    } else {
+      keyPair = box.keyPair();
+    }
+
+    return new EncryptKeyPair({
+      publicKey: keyPair.publicKey,
+      privateKey: keyPair.secretKey,
+    });
   }
 
   static convertPublicKeyToCurve(publicKey: Uint8Array): Uint8Array {
@@ -196,7 +229,7 @@ export class EncryptKeyPair {
 
   constructor(options: Partial<EncryptKeyPairObject>) {
     const { chainCode, controller, derivationPath, id, publicKey, privateKey } = options;
-    this.type = SUITE_ID;
+    this.type = X25519_SUITE_ID;
     this.controller = controller;
     this.id = id;
     this.chainCode = chainCode;
@@ -230,7 +263,7 @@ export class EncryptKeyPair {
     encoding: K = 'default' as K,
   ): ReturnType<KeyEncodingMap[K]> {
     if (encoding === 'der' || encoding === 'keyObject' || encoding === 'pem') {
-      throw new TypeError(`Encoding ${encoding} not supported for ${SUITE_ID}`);
+      throw new TypeError(`Encoding ${encoding} not supported for ${X25519_SUITE_ID}`);
     }
     return this.privateKey ? encodeKey(this.privateKey, encoding, 'private', 'sec1') : null;
   }

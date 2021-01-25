@@ -50,6 +50,16 @@ export function uint8ArrayToHexString(byteArray: Uint8Array): string {
     .join('');
 }
 
+export function toUint8Array(content: string | Buffer | Uint8Array): Uint8Array {
+  let bytes: Uint8Array;
+  if (Buffer.isBuffer(content)) {
+    bytes = bufferToUint8Array(content);
+  } else if (typeof content === 'string') {
+    bytes = bufferToUint8Array(Buffer.from(content, 'hex'));
+  }
+  return bytes;
+}
+
 export const derivationPathRegex = new RegExp("^m(\\/[0-9]+')+$");
 
 export const replaceDerive = (val: string): string => val.replace("'", '');

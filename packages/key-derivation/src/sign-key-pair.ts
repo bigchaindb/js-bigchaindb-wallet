@@ -1,5 +1,5 @@
 import * as base58 from 'bs58';
-import { sign } from 'tweetnacl';
+import { sign, SignKeyPair as NaclSignKeyPair } from 'tweetnacl';
 import { KeyDerivation } from './key-derivation';
 import {
   DerivedKeyPair,
@@ -8,18 +8,18 @@ import {
   SignKeyPairFactory,
   SignKeyPairObject,
 } from './types';
-import { bufferToUint8Array, encodeKey, base58Decode, isEqualBuffer } from './utils';
+import { bufferToUint8Array, encodeKey, base58Decode, isEqualBuffer, toUint8Array } from './utils';
 
 const INVALID_LENGTH = (el: string, length: number) => `${el} should be ${length} bytes length`;
 
-export const SUITE_ID = 'Ed25519VerificationKey2018';
+export const ED25519_SUITE_ID = 'Ed25519VerificationKey2018';
 
 export class SignKeyPair {
   static readonly publicKeyLength = sign.publicKeyLength;
   static readonly privateKeyLength = sign.secretKeyLength / 2;
   static readonly fullPrivateKeyLength = sign.secretKeyLength;
   static readonly seedLength = sign.seedLength;
-  static readonly suite = SUITE_ID;
+  static readonly suite = ED25519_SUITE_ID;
 
   publicKey: Uint8Array;
   privateKey?: Uint8Array;
@@ -51,8 +51,8 @@ export class SignKeyPair {
 
   static fromDerivedKeyPair(keyPair: DerivedKeyPair): SignKeyPair {
     const { chainCode, key, derivationPath } = keyPair;
-    if (!derivationPath || !(typeof derivationPath === 'string')) {
-      throw new Error('`derivationPath` must be string.');
+    if (derivationPath && !(typeof derivationPath === 'string')) {
+      throw new TypeError('`derivationPath` must be string.');
     }
     if (!key || key.length !== KeyDerivation.keyLength) {
       throw new TypeError(INVALID_LENGTH('Key', KeyDerivation.keyLength));
@@ -64,6 +64,18 @@ export class SignKeyPair {
     const privateKey = key;
     const fullPrivateKey = SignKeyPair.getFullPrivateKey(key, publicKey);
     return new SignKeyPair({ chainCode, derivationPath, publicKey, privateKey, fullPrivateKey });
+  }
+
+  static fromFactory(factory: SignKeyPairFactory): SignKeyPair {
+    const { chainCode, controller, derivationPath, id, publicKey, privateKey } = factory;
+    return new SignKeyPair({
+      chainCode: typeof chainCode === 'function' ? chainCode() : null,
+      controller,
+      derivationPath,
+      id,
+      publicKey: publicKey(),
+      privateKey: typeof chainCode === 'function' ? privateKey() : null,
+    });
   }
 
   static fromFingerprint(fingerprint: string): SignKeyPair {
@@ -79,6 +91,37 @@ export class SignKeyPair {
     // TODO: find a way to pass derivationPath ?
     return new SignKeyPair({
       publicKey: bufferToUint8Array(buffer.slice(2)),
+    });
+  }
+
+  static generate(options: {
+    seed?: string | Uint8Array | Buffer;
+    secretKey?: string | Uint8Array | Buffer;
+  }): SignKeyPair {
+    let keyPair: NaclSignKeyPair;
+    if (options.seed) {
+      const { seed } = options;
+      const seedBytes = toUint8Array(seed);
+      if (!(seedBytes instanceof Uint8Array && seedBytes.length === this.seedLength)) {
+        throw new TypeError(INVALID_LENGTH('Seed', this.seedLength));
+      }
+      keyPair = sign.keyPair.fromSeed(seedBytes);
+    } else if (options.secretKey) {
+      const { secretKey } = options;
+      const secretKeyBytes = toUint8Array(secretKey);
+      if (!(secretKeyBytes instanceof Uint8Array && secretKeyBytes.length === this.fullPrivateKeyLength)) {
+        throw new TypeError(INVALID_LENGTH('SecretKey', this.fullPrivateKeyLength));
+      }
+      keyPair = sign.keyPair.fromSecretKey(secretKeyBytes);
+    } else {
+      keyPair = sign.keyPair();
+    }
+
+    const privateKey = keyPair.secretKey.subarray(0, 32);
+    return new SignKeyPair({
+      publicKey: keyPair.publicKey,
+      privateKey,
+      fullPrivateKey: keyPair.secretKey,
     });
   }
 
@@ -166,7 +209,7 @@ export class SignKeyPair {
 
   constructor(options: Partial<SignKeyPairObject>) {
     const { chainCode, controller, derivationPath, id, publicKey, privateKey, fullPrivateKey } = options;
-    this.type = SUITE_ID;
+    this.type = ED25519_SUITE_ID;
     this.controller = controller;
     this.id = id;
     this.chainCode = chainCode;

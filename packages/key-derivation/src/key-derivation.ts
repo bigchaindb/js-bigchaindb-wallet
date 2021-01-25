@@ -16,13 +16,18 @@ export class KeyDerivation {
 
   private _seedHex: string;
 
-  static getMasterKeyFromSeed(seed: string, encoding: BufferEncoding = 'hex'): DerivedKeyPair {
+  static getMasterKeyFromSeed(seed: string | Buffer | Uint8Array, encoding: BufferEncoding = 'hex'): DerivedKeyPair {
+    let seedBuffer: Buffer;
+    if (seed instanceof Uint8Array) {
+      seedBuffer = Buffer.from(seed);
+    } else if (typeof seed === 'string') {
+      seedBuffer = Buffer.from(seed, encoding);
+    }
     const hmac = createHmac('sha512', ED25519_CURVE);
-    const seedBuffer = Buffer.from(seed, encoding);
     if (seedBuffer.length !== this.seedLength) {
       throw new TypeError(INVALID_LENGTH('Seed', this.seedLength));
     }
-    const I = hmac.update(Buffer.from(seed, encoding)).digest();
+    const I = hmac.update(seedBuffer).digest();
     const IL = I.slice(0, 32);
     const IR = I.slice(32);
     return {
