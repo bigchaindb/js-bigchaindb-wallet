@@ -19,12 +19,12 @@ export function isEqualBuffer(buf1: Buffer, buf2: Buffer): boolean {
 }
 
 export function base58Decode(options: {
-  decode: (string: string) => Buffer;
+  decode?: (string: string) => Buffer;
   keyMaterial: string;
   type: KeyPairType;
 }): Buffer {
   let bytes: Buffer;
-  const { decode, keyMaterial, type } = options;
+  const { decode = base58.decode as (string: string) => Buffer, keyMaterial, type } = options;
   try {
     bytes = decode(keyMaterial);
   } catch (e) {
@@ -36,6 +36,26 @@ export function base58Decode(options: {
     throw new TypeError(`The ${type} key material must be Base58 encoded.`);
   }
   return bytes;
+}
+
+export function base58Encode(options: {
+  encode?: (buffer: Buffer | number[] | Uint8Array) => string;
+  keyMaterial: Buffer | number[] | Uint8Array;
+  type: KeyPairType;
+}): string {
+  let base58Key: string;
+  const { encode = base58.encode as (buffer: Buffer | number[] | Uint8Array) => string, keyMaterial, type } = options;
+  try {
+    base58Key = encode(keyMaterial);
+  } catch (e) {
+    // do nothing
+    // the bs58 implementation throws, forge returns undefined
+    // this helper throws when no result is produced
+  }
+  if (base58Key === undefined) {
+    throw new TypeError(`The ${type} key material must be Bytes Buffer.`);
+  }
+  return base58Key;
 }
 
 export function bufferToUint8Array(buffer: Buffer): Uint8Array {
