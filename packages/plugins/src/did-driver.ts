@@ -133,7 +133,7 @@ export class DidDriver {
       } else if (derivedKeyPair) {
         signKeyPairFactory = BigChainWallet.derivedKeyPairFactory('sign', derivedKeyPair);
       } else {
-        throw new TypeError('`seed` or `derivedKeyPair` is required.');
+        signKeyPairFactory = SignKeyPair.generate().factory();
       }
 
       const signKeyPair = SignKeyPair.fromFactory(signKeyPairFactory);
