@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0](https://github.com/s1seven/js-bigchaindb-wallet/compare/@s1seven/js-bigchaindb-key-derivation@0.0.5...@s1seven/js-bigchaindb-key-derivation@0.1.0) (2021-01-25)
+
+
+### Bug Fixes
+
+* add tests ([882fffd](https://github.com/s1seven/js-bigchaindb-wallet/commit/882fffd88d2210608d7eb5f7f79a2a53539c0dd6))
+
+
+### Features
+
+* implement Linked Data Cryptographic specs ([9a87bcb](https://github.com/s1seven/js-bigchaindb-wallet/commit/9a87bcbb0693dfcbaf8d3268b275323be1e5d104))
+
+
+
+
+
 ## [0.0.5](https://github.com/s1seven/js-bigchaindb-wallet/compare/@s1seven/js-bigchaindb-key-derivation@0.0.4...@s1seven/js-bigchaindb-key-derivation@0.0.5) (2021-01-11)
 
 

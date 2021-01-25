@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/s1seven/js-bigchaindb-wallet/compare/@s1seven/js-bigchaindb-wallet-plugins@0.1.1...@s1seven/js-bigchaindb-wallet-plugins@0.2.0) (2021-01-25)
+
+
+### Bug Fixes
+
+* add constants as static members in plugins ([4ebda89](https://github.com/s1seven/js-bigchaindb-wallet/commit/4ebda896adff1bcd65e6e00aacfc0eb75335c4ae))
+
+
+### Features
+
+* create did-driver module ([23a9b00](https://github.com/s1seven/js-bigchaindb-wallet/commit/23a9b00fe1305fe97565ddf81e3338fab5d243d8))
+
+
+
+
+
 ## [0.1.1](https://github.com/s1seven/js-bigchaindb-wallet/compare/@s1seven/js-bigchaindb-wallet-plugins@0.1.0...@s1seven/js-bigchaindb-wallet-plugins@0.1.1) (2021-01-21)
 
 
