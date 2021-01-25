@@ -53,6 +53,57 @@ const specTestCase = (num: number) => () => {
     });
   });
 
+  it('should throw a type error when creating key pair with no public key', () => {
+    expect(() => new SignKeyPair({})).toThrow(new TypeError('The "publicKey" property is required.'));
+    expect(() => new EncryptKeyPair({})).toThrow(new TypeError('The "publicKey" property is required.'));
+  });
+
+  it('should throw a type error when creating key pair from invalid derived key pair', () => {
+    const invalidChainCode = new Uint8Array();
+    const invalidKey = new Uint8Array();
+    const derivationPath = `${BIG_CHAIN_DERIVATION_PATH}/${0}'/${0}'/0'`;
+    expect(() =>
+      SignKeyPair.fromDerivedKeyPair({ key: invalidKey, chainCode: invalidChainCode, derivationPath }),
+    ).toThrow(new TypeError(`Key should be ${KeyDerivation.keyLength} bytes length`));
+
+    expect(() =>
+      EncryptKeyPair.fromDerivedKeyPair({ key: invalidKey, chainCode: invalidChainCode, derivationPath }),
+    ).toThrow(new TypeError(`Key should be ${KeyDerivation.keyLength} bytes length`));
+  });
+
+  it('should throw a type error when creating encrypt key pair from invalid sign key pair', () => {
+    const signKeyPair = new SignKeyPair({ publicKey: new Uint8Array() });
+    expect(() => EncryptKeyPair.fromSignKeyPair(signKeyPair)).toThrow(
+      new TypeError(`PublicKey should be ${SignKeyPair.publicKeyLength} bytes length`),
+    );
+  });
+
+  it('should throw a type error when generating key pair from invalid secret | seed', () => {
+    const invalidSeed = 'invalid-seed';
+    const invalidSecret = 'invalid-secret';
+    expect(() => SignKeyPair.generate({ seed: invalidSeed, encoding: 'utf-8' })).toThrow(
+      new TypeError(`Seed should be ${SignKeyPair.seedLength} bytes length`),
+    );
+
+    expect(() => SignKeyPair.generate({ secretKey: invalidSecret, encoding: 'utf-8' })).toThrow(
+      new TypeError(`SecretKey should be ${SignKeyPair.fullPrivateKeyLength} bytes length`),
+    );
+
+    expect(() => EncryptKeyPair.generate({ secretKey: invalidSecret, encoding: 'utf-8' })).toThrow(
+      new TypeError(`SecretKey should be ${EncryptKeyPair.privateKeyLength} bytes length`),
+    );
+  });
+
+  it('should throw a type error when creating key pair from invalid fingerprint', () => {
+    const invalidFingerprint = 'invalid-fingerprint';
+    expect(() => SignKeyPair.fromFingerprint(invalidFingerprint)).toThrow(
+      new Error('`fingerprint` must be a multibase encoded string.'),
+    );
+    expect(() => EncryptKeyPair.fromFingerprint(invalidFingerprint)).toThrow(
+      new Error('`fingerprint` must be a multibase encoded string.'),
+    );
+  });
+
   it(`should convert Ed's signing keys to curve`, () => {
     const signKeyPairFactory = wallet.getDerivedKeyPair('sign');
     const signPublicKeyHex = signKeyPairFactory.publicKey('hex');
