@@ -97,18 +97,19 @@ export class SignKeyPair {
   static generate(options: {
     seed?: string | Uint8Array | Buffer;
     secretKey?: string | Uint8Array | Buffer;
+    encoding?: BufferEncoding;
   }): SignKeyPair {
     let keyPair: NaclSignKeyPair;
     if (options.seed) {
-      const { seed } = options;
-      const seedBytes = toUint8Array(seed);
+      const { encoding, seed } = options;
+      const seedBytes = toUint8Array(seed, encoding);
       if (!(seedBytes instanceof Uint8Array && seedBytes.length === this.seedLength)) {
         throw new TypeError(INVALID_LENGTH('Seed', this.seedLength));
       }
       keyPair = sign.keyPair.fromSeed(seedBytes);
     } else if (options.secretKey) {
-      const { secretKey } = options;
-      const secretKeyBytes = toUint8Array(secretKey);
+      const { encoding, secretKey } = options;
+      const secretKeyBytes = toUint8Array(secretKey, encoding);
       if (!(secretKeyBytes instanceof Uint8Array && secretKeyBytes.length === this.fullPrivateKeyLength)) {
         throw new TypeError(INVALID_LENGTH('SecretKey', this.fullPrivateKeyLength));
       }

@@ -109,11 +109,11 @@ export class EncryptKeyPair {
     return new EncryptKeyPair({ publicKey: bufferToUint8Array(buffer.slice(2)) });
   }
 
-  static generate(options: { secretKey?: string | Uint8Array | Buffer }): EncryptKeyPair {
+  static generate(options: { secretKey?: string | Uint8Array | Buffer; encoding?: BufferEncoding }): EncryptKeyPair {
     let keyPair: NaclBoxKeyPair;
     if (options.secretKey) {
-      const { secretKey } = options;
-      const secretKeyBytes = toUint8Array(secretKey);
+      const { encoding, secretKey } = options;
+      const secretKeyBytes = toUint8Array(secretKey, encoding);
       if (!(secretKeyBytes instanceof Uint8Array && secretKeyBytes.length === this.privateKeyLength)) {
         throw new TypeError(INVALID_LENGTH('SecretKey', this.privateKeyLength));
       }

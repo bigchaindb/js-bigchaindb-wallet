@@ -50,12 +50,12 @@ export function uint8ArrayToHexString(byteArray: Uint8Array): string {
     .join('');
 }
 
-export function toUint8Array(content: string | Buffer | Uint8Array): Uint8Array {
+export function toUint8Array(content: string | Buffer | Uint8Array, encoding: BufferEncoding = 'hex'): Uint8Array {
   let bytes: Uint8Array;
   if (Buffer.isBuffer(content)) {
     bytes = bufferToUint8Array(content);
   } else if (typeof content === 'string') {
-    bytes = bufferToUint8Array(Buffer.from(content, 'hex'));
+    bytes = bufferToUint8Array(Buffer.from(content, encoding));
   }
   return bytes;
 }
