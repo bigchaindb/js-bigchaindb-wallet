@@ -109,7 +109,9 @@ export class EncryptKeyPair {
     return new EncryptKeyPair({ publicKey: bufferToUint8Array(buffer.slice(2)) });
   }
 
-  static generate(options: { secretKey?: string | Uint8Array | Buffer; encoding?: BufferEncoding }): EncryptKeyPair {
+  static generate(
+    options: { secretKey?: string | Uint8Array | Buffer; encoding?: BufferEncoding } = {},
+  ): EncryptKeyPair {
     let keyPair: NaclBoxKeyPair;
     if (options.secretKey) {
       const { encoding, secretKey } = options;
@@ -276,9 +278,12 @@ export class EncryptKeyPair {
     return EncryptKeyPair.verifyFingerprint(fingerprint, this.getPublicKey('base58'));
   }
 
-  toObject(addPrivateKey = false): EncryptKeyPairObject {
+  toObject(options: { publicKey: boolean; privateKey: boolean }): EncryptKeyPairObject {
+    const { publicKey = false, privateKey = false } = options;
+    if (!publicKey && !privateKey) {
+      throw new Error('Export requires specifying either "publicKey" or "privateKey".');
+    }
     const keyPair: EncryptKeyPairObject = {
-      publicKey: this.getPublicKey(),
       chainCode: this.getChainCode(),
       fingerprint: this.getFingerprint(),
       derivationPath: this.derivationPath,
@@ -286,7 +291,10 @@ export class EncryptKeyPair {
       id: this.id,
       controller: this.controller,
     };
-    if (addPrivateKey) {
+    if (publicKey) {
+      keyPair.publicKey = this.getPublicKey();
+    }
+    if (privateKey) {
       keyPair.privateKey = this.getPrivateKey();
     }
     return keyPair;

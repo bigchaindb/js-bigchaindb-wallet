@@ -94,11 +94,13 @@ export class SignKeyPair {
     });
   }
 
-  static generate(options: {
-    seed?: string | Uint8Array | Buffer;
-    secretKey?: string | Uint8Array | Buffer;
-    encoding?: BufferEncoding;
-  }): SignKeyPair {
+  static generate(
+    options: {
+      seed?: string | Uint8Array | Buffer;
+      secretKey?: string | Uint8Array | Buffer;
+      encoding?: BufferEncoding;
+    } = {},
+  ): SignKeyPair {
     let keyPair: NaclSignKeyPair;
     if (options.seed) {
       const { encoding, seed } = options;
@@ -272,9 +274,12 @@ export class SignKeyPair {
     return SignKeyPair.verifyFingerprint(fingerprint, this.getPublicKey('base58'));
   }
 
-  toObject(addPrivateKey = false): SignKeyPairObject {
+  toObject(options: { publicKey: boolean; privateKey: boolean }): SignKeyPairObject {
+    const { publicKey = false, privateKey = false } = options;
+    if (!publicKey && !privateKey) {
+      throw new Error('Export requires specifying either "publicKey" or "privateKey".');
+    }
     const keyPair: SignKeyPairObject = {
-      publicKey: this.getPublicKey(),
       chainCode: this.getChainCode(),
       fingerprint: this.getFingerprint(),
       derivationPath: this.derivationPath,
@@ -282,7 +287,10 @@ export class SignKeyPair {
       id: this.id,
       controller: this.controller,
     };
-    if (addPrivateKey) {
+    if (publicKey) {
+      keyPair.publicKey = this.getPublicKey();
+    }
+    if (privateKey) {
       keyPair.privateKey = this.getPrivateKey();
       keyPair.fullPrivateKey = this.getFullPrivateKey();
     }

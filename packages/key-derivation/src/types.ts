@@ -46,9 +46,9 @@ export type KeyPairFactory = {
 };
 
 export type KeyPairObject = {
-  publicKey: Uint8Array;
+  publicKey?: Uint8Array;
   privateKey?: Uint8Array;
-  chainCode: Uint8Array;
+  chainCode?: Uint8Array;
   type: string;
   id?: string;
   controller?: string;
