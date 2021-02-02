@@ -1,10 +1,10 @@
 import * as base58 from 'bs58';
 import { createPublicKey, createPrivateKey, KeyObject } from 'crypto';
 import { KeyEncodingMap, KeyPairType } from './types';
-import { asn1, pki, util } from 'node-forge';
+import { asn1, ASN1Class, ASN1Type } from './asn1';
+import { ByteStringBuffer } from './bytestring-buffer';
+import { oids } from './oids';
 import { encodeBase64 } from 'tweetnacl-util';
-
-const { ByteStringBuffer } = util;
 
 export function isEqualBuffer(buf1: Buffer, buf2: Buffer): boolean {
   if (buf1.length !== buf2.length) {
@@ -96,7 +96,7 @@ export function isValidDerivationPath(path: string): boolean {
 }
 
 export function privateKeyDerEncode(options: { privateKeyBytes?: Buffer; seedBytes?: Buffer }): Buffer {
-  // TODO: FIX issue with this converter (all keys are the same)
+  // TODO: FIX issue with X25519, this converter (all keys are the same)
   const { privateKeyBytes, seedBytes } = options;
   if (!(privateKeyBytes || seedBytes)) {
     throw new TypeError('`privateKeyBytes` or `seedBytes` is required.');
@@ -116,17 +116,15 @@ export function privateKeyDerEncode(options: { privateKeyBytes?: Buffer; seedByt
     p = Buffer.from(privateKeyBytes.buffer, privateKeyBytes.byteOffset, 32);
   }
   const keyBuffer = new ByteStringBuffer(p);
-  const asn1Key = asn1.create(asn1.Class.UNIVERSAL, asn1.Type.OCTETSTRING, false, keyBuffer.getBytes());
-
-  const a = asn1.create(asn1.Class.UNIVERSAL, asn1.Type.SEQUENCE, true, [
-    // TODO: fix missing integerToDer in node-forge types
-    asn1.create(asn1.Class.UNIVERSAL, asn1.Type.INTEGER, false, (asn1 as any).integerToDer(0).getBytes()),
+  const asn1Key = asn1.create(ASN1Class.UNIVERSAL, ASN1Type.OCTETSTRING, false, keyBuffer.getBytes());
+  const a = asn1.create(ASN1Class.UNIVERSAL, ASN1Type.SEQUENCE, true, [
+    asn1.create(ASN1Class.UNIVERSAL, ASN1Type.INTEGER, false, asn1.integerToDer(0).getBytes()),
     // privateKeyAlgorithm
-    asn1.create(asn1.Class.UNIVERSAL, asn1.Type.SEQUENCE, true, [
-      asn1.create(asn1.Class.UNIVERSAL, asn1.Type.OID, false, asn1.oidToDer(pki.oids.EdDSA25519).getBytes()),
+    asn1.create(ASN1Class.UNIVERSAL, ASN1Type.SEQUENCE, true, [
+      asn1.create(ASN1Class.UNIVERSAL, ASN1Type.OID, false, asn1.oidToDer(oids.EdDSA25519).getBytes()),
     ]),
     // private key
-    asn1.create(asn1.Class.UNIVERSAL, asn1.Type.OCTETSTRING, false, asn1.toDer(asn1Key).getBytes()),
+    asn1.create(ASN1Class.UNIVERSAL, ASN1Type.OCTETSTRING, false, asn1.toDer(asn1Key).getBytes()),
   ]);
 
   const privateKeyDer = asn1.toDer(a);
@@ -142,13 +140,12 @@ export function publicKeyDerEncode(options: { publicKeyBytes: Buffer }): Buffer 
   // the bitstring being 256 bits vs. 170 bits (without padding)
   const zeroBuffer = Buffer.from(new Uint8Array([0]));
   const keyBuffer = new ByteStringBuffer(Buffer.concat([zeroBuffer, publicKeyBytes]));
-
-  const a = asn1.create(asn1.Class.UNIVERSAL, asn1.Type.SEQUENCE, true, [
-    asn1.create(asn1.Class.UNIVERSAL, asn1.Type.SEQUENCE, true, [
-      asn1.create(asn1.Class.UNIVERSAL, asn1.Type.OID, false, asn1.oidToDer(pki.oids.EdDSA25519).getBytes()),
+  const a = asn1.create(ASN1Class.UNIVERSAL, ASN1Type.SEQUENCE, true, [
+    asn1.create(ASN1Class.UNIVERSAL, ASN1Type.SEQUENCE, true, [
+      asn1.create(ASN1Class.UNIVERSAL, ASN1Type.OID, false, asn1.oidToDer(oids.EdDSA25519).getBytes()),
     ]),
     // public key
-    asn1.create(asn1.Class.UNIVERSAL, asn1.Type.BITSTRING, false, keyBuffer.getBytes()),
+    asn1.create(ASN1Class.UNIVERSAL, ASN1Type.BITSTRING, false, keyBuffer.getBytes()),
   ]);
 
   const publicKeyDer = asn1.toDer(a);

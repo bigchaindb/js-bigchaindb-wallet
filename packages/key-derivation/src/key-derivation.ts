@@ -23,6 +23,7 @@ export class KeyDerivation {
     } else if (typeof seed === 'string') {
       seedBuffer = Buffer.from(seed, encoding);
     }
+    // TODO: allow seed of 32, 48 and 64 bytes length
     const hmac = createHmac('sha512', ED25519_CURVE);
     if (seedBuffer.length !== this.seedLength) {
       throw new TypeError(INVALID_LENGTH('Seed', this.seedLength));
