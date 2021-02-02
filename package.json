@@ -1,6 +1,5 @@
 {
   "name": "root",
-  "private": true,
   "license": "Apache-2.0",
   "homepage": "https://github.com/s1seven/js-bigchaindb-wallets#readme",
   "repository": {
