@@ -13,7 +13,10 @@ export class SymmetricCipher implements Cipher {
     return randomBytes(secretbox.nonceLength);
   }
 
-  static createSecret(type?: 'string') {
+  static createSecret(type: 'string'): string;
+  static createSecret(): Uint8Array;
+
+  static createSecret(type?: 'string'): string | Uint8Array {
     const randomInt = randomBytes(secretbox.keyLength);
     return type ? encodeBase64(randomInt) : randomInt;
   }

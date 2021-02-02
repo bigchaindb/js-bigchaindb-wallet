@@ -163,12 +163,14 @@ export class DidDriver {
       type: edKeyPair.type,
       controller: did,
       publicKeyBase58: edKeyPair.getPublicKey('base58'),
+      publicKeyBase64: edKeyPair.getPublicKey('base64'),
     };
     const didDocKeyAgreement = {
       id: dhKeyPair.id,
       type: dhKeyPair.type,
       controller: did,
       publicKeyBase58: dhKeyPair.getPublicKey('base58'),
+      publicKeyBase64: dhKeyPair.getPublicKey('base64'),
     };
 
     const didDoc: DidDoc = {
@@ -184,10 +186,15 @@ export class DidDriver {
 
     Object.defineProperty(didDoc, 'keys', {
       value: {
-        [keyId]: { ...didDocPublicKey, privateKeyBase58: edKeyPair.getFullPrivateKey('base58') },
+        [keyId]: {
+          ...didDocPublicKey,
+          privateKeyBase58: edKeyPair.getFullPrivateKey('base58'),
+          privateKeyBase64: edKeyPair.getFullPrivateKey('base64'),
+        },
         [dhKeyPair.id]: {
           ...didDocKeyAgreement,
           privateKeyBase58: dhKeyPair.getPrivateKey('base58'),
+          privateKeyBase64: dhKeyPair.getPrivateKey('base64'),
         },
       },
       enumerable: false,
