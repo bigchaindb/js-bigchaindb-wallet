@@ -5,7 +5,7 @@ import { HARDENED_OFFSET, KeyDerivation } from './key-derivation';
 import { SignKeyPair } from './sign-key-pair';
 import {
   Chain,
-  DerivedKeyPair,
+  DerivatedKeyPair,
   DerivationKeyPairMap,
   KeyEncodingMap,
   KeyPairDerivationOptions,
@@ -83,31 +83,31 @@ export class BigChainWallet {
     return derivationKeyPairMap[type]() as ReturnType<DerivationKeyPairMap[P]>;
   }
 
-  static derivedKeyPairFactoryFromSeed<P extends keyof DerivationKeyPairMap>(
+  static derivatedKeyPairFactoryFromSeed<P extends keyof DerivationKeyPairMap>(
     type: P,
     seed: string,
     options: KeyPairDerivationOptions,
   ): ReturnType<DerivationKeyPairMap[P]> {
     const derivationKeyPairMap: DerivationKeyPairMap = {
-      sign: () => SignKeyPair.getDerivedKeyPair(seed, options).factory(),
-      encrypt: () => EncryptKeyPair.getDerivedKeyPair(seed, options).factory(),
+      sign: () => SignKeyPair.getDerivatedKeyPair(seed, options).factory(),
+      encrypt: () => EncryptKeyPair.getDerivatedKeyPair(seed, options).factory(),
     };
     return derivationKeyPairMap[type]() as ReturnType<DerivationKeyPairMap[P]>;
   }
 
-  static derivedKeyPairFactory<P extends keyof DerivationKeyPairMap>(
+  static derivatedKeyPairFactory<P extends keyof DerivationKeyPairMap>(
     type: P,
-    derivedKeyPair: DerivedKeyPair,
+    derivatedKeyPair: DerivatedKeyPair,
   ): ReturnType<DerivationKeyPairMap[P]> {
     const derivationKeyPairMap: DerivationKeyPairMap = {
-      sign: () => SignKeyPair.fromDerivedKeyPair(derivedKeyPair).factory(),
-      encrypt: () => EncryptKeyPair.fromDerivedKeyPair(derivedKeyPair).factory(),
+      sign: () => SignKeyPair.fromDerivatedKeyPair(derivatedKeyPair).factory(),
+      encrypt: () => EncryptKeyPair.fromDerivatedKeyPair(derivatedKeyPair).factory(),
     };
     return derivationKeyPairMap[type]() as ReturnType<DerivationKeyPairMap[P]>;
   }
 
   // Go deeper in derivationPath after `m/44'/822'/accountId'`
-  static getDerivedKeyPair<P extends keyof DerivationKeyPairMap = 'sign'>(
+  static getDerivatedKeyPair<P extends keyof DerivationKeyPairMap = 'sign'>(
     type: P,
     signKeyPair: SignKeyPairFactory,
     index: number,
@@ -115,15 +115,15 @@ export class BigChainWallet {
   ): ReturnType<DerivationKeyPairMap[P]> {
     const { privateKey, chainCode, derivationPath } = signKeyPair;
     const segments = [index, chain];
-    const derivedKeyPair = segments.reduce(
+    const derivatedKeyPair = segments.reduce(
       (parentKeys, segment) => KeyDerivation.childKeyDerivation(parentKeys, segment + HARDENED_OFFSET),
       {
         key: privateKey(),
         chainCode: chainCode(),
-        derivationPath: `${derivationPath}/${index}'/${chain}'`,
+        derivationPath: `${derivationPath}/${chain}'/${index}'`,
       },
     );
-    return BigChainWallet.derivedKeyPairFactory<P>(type, derivedKeyPair);
+    return BigChainWallet.derivatedKeyPairFactory<P>(type, derivatedKeyPair);
   }
 
   constructor(seedHex: string) {
@@ -134,11 +134,11 @@ export class BigChainWallet {
     return BigChainWallet.masterKeyPairFactory<P>(type, this._seedHex);
   }
 
-  getDerivedKeyPair<P extends keyof DerivationKeyPairMap = 'sign'>(
+  getDerivatedKeyPair<P extends keyof DerivationKeyPairMap = 'sign'>(
     type: P,
     options: KeyPairDerivationOptions = {},
   ): ReturnType<DerivationKeyPairMap[P]> {
-    return BigChainWallet.derivedKeyPairFactoryFromSeed<P>(type, this._seedHex, options);
+    return BigChainWallet.derivatedKeyPairFactoryFromSeed<P>(type, this._seedHex, options);
   }
 
   getDerivedPublicKey<K extends keyof KeyEncodingMap = 'default', P extends keyof DerivationKeyPairMap = 'sign'>(
@@ -146,7 +146,7 @@ export class BigChainWallet {
     options: KeyPairDerivationOptions = {},
     encoding?: K,
   ) {
-    return this.getDerivedKeyPair(type, options).publicKey<K>(encoding);
+    return this.getDerivatedKeyPair(type, options).publicKey<K>(encoding);
   }
 
   getDerivedPrivateKey<K extends keyof KeyEncodingMap = 'default', P extends keyof DerivationKeyPairMap = 'sign'>(
@@ -154,7 +154,7 @@ export class BigChainWallet {
     options: KeyPairDerivationOptions = {},
     encoding?: K,
   ) {
-    return this.getDerivedKeyPair(type, options).privateKey<K>(encoding);
+    return this.getDerivatedKeyPair(type, options).privateKey<K>(encoding);
   }
 
   getDerivedChainCode<K extends keyof KeyEncodingMap = 'default', P extends keyof DerivationKeyPairMap = 'sign'>(
@@ -162,7 +162,7 @@ export class BigChainWallet {
     options: KeyPairDerivationOptions = {},
     encoding?: K,
   ) {
-    return this.getDerivedKeyPair(type, options).chainCode<K>(encoding);
+    return this.getDerivatedKeyPair(type, options).chainCode<K>(encoding);
   }
 
   getDerivedFullPrivateKey<K extends keyof KeyEncodingMap = 'default', P extends keyof DerivationKeyPairMap = 'sign'>(
@@ -173,7 +173,7 @@ export class BigChainWallet {
     if (type !== 'sign') {
       throw new Error('Full private key is only supported for type sign');
     }
-    return this.getDerivedKeyPair(type, options).fullPrivateKey<K>(encoding);
+    return this.getDerivatedKeyPair(type, options).fullPrivateKey<K>(encoding);
   }
 
   signTransaction(): (

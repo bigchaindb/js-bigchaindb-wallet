@@ -37,19 +37,19 @@ const specTestCase = (num: number) => () => {
 
   it('should derives expected child keys', () => {
     testCase.keyPairs.forEach(([publicKey, privateKey], index) => {
-      const derivedSignKeyPair = wallet.getDerivedKeyPair('sign', { account: index });
+      const derivedSignKeyPair = wallet.getDerivatedKeyPair('sign', { account: index });
       assertKeypair(derivedSignKeyPair, publicKey, privateKey);
 
       const childIndex = 1;
-      const derivedChildSignKeyPair = BigChainWallet.getDerivedKeyPair('sign', derivedSignKeyPair, childIndex);
-      const derivedChildEncryptKeyPair = BigChainWallet.getDerivedKeyPair('encrypt', derivedSignKeyPair, childIndex);
+      const derivedChildSignKeyPair = BigChainWallet.getDerivatedKeyPair('sign', derivedSignKeyPair, childIndex);
+      const derivedChildEncryptKeyPair = BigChainWallet.getDerivatedKeyPair('encrypt', derivedSignKeyPair, childIndex);
       const expectedChildKeyPair = KeyDerivation.derivePath(
         `${BIG_CHAIN_DERIVATION_PATH}/${index}'/${childIndex}'/0'`,
         seedHex,
       );
 
-      assertChildKeypair(derivedChildSignKeyPair, SignKeyPair.fromDerivedKeyPair(expectedChildKeyPair));
-      assertChildKeypair(derivedChildEncryptKeyPair, EncryptKeyPair.fromDerivedKeyPair(expectedChildKeyPair));
+      assertChildKeypair(derivedChildSignKeyPair, SignKeyPair.fromDerivatedKeyPair(expectedChildKeyPair));
+      assertChildKeypair(derivedChildEncryptKeyPair, EncryptKeyPair.fromDerivatedKeyPair(expectedChildKeyPair));
     });
   });
 
@@ -63,11 +63,11 @@ const specTestCase = (num: number) => () => {
     const invalidKey = new Uint8Array();
     const derivationPath = `${BIG_CHAIN_DERIVATION_PATH}/${0}'/${0}'/0'`;
     expect(() =>
-      SignKeyPair.fromDerivedKeyPair({ key: invalidKey, chainCode: invalidChainCode, derivationPath }),
+      SignKeyPair.fromDerivatedKeyPair({ key: invalidKey, chainCode: invalidChainCode, derivationPath }),
     ).toThrow(new TypeError(`Key should be ${KeyDerivation.keyLength} bytes length`));
 
     expect(() =>
-      EncryptKeyPair.fromDerivedKeyPair({ key: invalidKey, chainCode: invalidChainCode, derivationPath }),
+      EncryptKeyPair.fromDerivatedKeyPair({ key: invalidKey, chainCode: invalidChainCode, derivationPath }),
     ).toThrow(new TypeError(`Key should be ${KeyDerivation.keyLength} bytes length`));
   });
 
@@ -105,10 +105,10 @@ const specTestCase = (num: number) => () => {
   });
 
   it(`should convert Ed's signing keys to curve`, () => {
-    const signKeyPairFactory = wallet.getDerivedKeyPair('sign');
+    const signKeyPairFactory = wallet.getDerivatedKeyPair('sign');
     const signPublicKeyHex = signKeyPairFactory.publicKey('hex');
     const signPrivateKeyHex = signKeyPairFactory.privateKey('hex');
-    const encryptKeyPairFactory = wallet.getDerivedKeyPair('encrypt');
+    const encryptKeyPairFactory = wallet.getDerivatedKeyPair('encrypt');
     const encryptPublicKeyHex = encryptKeyPairFactory.publicKey('hex');
     const encryptPrivateKeyHex = encryptKeyPairFactory.privateKey('hex');
 
@@ -119,11 +119,11 @@ const specTestCase = (num: number) => () => {
   });
 
   it(`should create key Pairs from fingerprint`, () => {
-    const signKeyPairFactory = wallet.getDerivedKeyPair('sign');
+    const signKeyPairFactory = wallet.getDerivatedKeyPair('sign');
     const signFingerprint = signKeyPairFactory.fingerprint();
     const signKeyPair2 = SignKeyPair.fromFingerprint(signFingerprint);
     const signFingerprintValid = SignKeyPair.verifyFingerprint(signFingerprint, signKeyPair2.getPublicKey('base58'));
-    const encryptKeyPairFactory = wallet.getDerivedKeyPair('encrypt');
+    const encryptKeyPairFactory = wallet.getDerivatedKeyPair('encrypt');
     const encryptFingerprint = encryptKeyPairFactory.fingerprint();
     const encryptKeyPair2 = EncryptKeyPair.fromFingerprint(encryptFingerprint);
     const encryptFingerprintValid = EncryptKeyPair.verifyFingerprint(
@@ -140,10 +140,10 @@ const specTestCase = (num: number) => () => {
   });
 
   it(`should convert key Pairs to DER`, () => {
-    const signKeyPairFactory = wallet.getDerivedKeyPair('sign');
+    const signKeyPairFactory = wallet.getDerivatedKeyPair('sign');
     const signPublicKeyDer = signKeyPairFactory.publicKey('der');
     const signPrivateKeyDer = signKeyPairFactory.privateKey('der');
-    const encryptKeyPairFactory = wallet.getDerivedKeyPair('encrypt');
+    const encryptKeyPairFactory = wallet.getDerivatedKeyPair('encrypt');
     const encryptPublicKeyDer = encryptKeyPairFactory.publicKey('der');
     // const encryptPrivateKeyDer = encryptKeyPairFactory.privateKey('der');
 
@@ -154,10 +154,10 @@ const specTestCase = (num: number) => () => {
   });
 
   it(`should convert key Pairs to KeyObject`, () => {
-    const signKeyPairFactory = wallet.getDerivedKeyPair('sign');
+    const signKeyPairFactory = wallet.getDerivatedKeyPair('sign');
     const signPublicKeyObject = signKeyPairFactory.publicKey('keyObject');
     const signPrivateKeyObject = signKeyPairFactory.privateKey('keyObject');
-    const encryptKeyPairFactory = wallet.getDerivedKeyPair('encrypt');
+    const encryptKeyPairFactory = wallet.getDerivatedKeyPair('encrypt');
     const encryptPublicKeyObject = encryptKeyPairFactory.publicKey('keyObject');
     // const encryptPrivateKeyObject = encryptKeyPairFactory.privateKey('keyObject');
 
@@ -168,10 +168,10 @@ const specTestCase = (num: number) => () => {
   });
 
   it(`should convert key Pairs to PEM`, () => {
-    const signKeyPairFactory = wallet.getDerivedKeyPair('sign');
+    const signKeyPairFactory = wallet.getDerivatedKeyPair('sign');
     const signPublicKeyPem = signKeyPairFactory.publicKey('pem');
     const signPrivateKeyPem = signKeyPairFactory.privateKey('pem');
-    const encryptKeyPairFactory = wallet.getDerivedKeyPair('encrypt');
+    const encryptKeyPairFactory = wallet.getDerivatedKeyPair('encrypt');
     const encryptPublicKeyPem = encryptKeyPairFactory.publicKey('pem');
     // const encryptPrivateKeyPem = encryptKeyPairFactory.privateKey('pem');
 

@@ -1,6 +1,6 @@
 import { createHmac } from 'crypto';
-import { Chain, DerivedKeyPair } from './types';
-import { bufferToUint8Array, isValidDerivationPath, replaceDerive } from './utils';
+import { Chain, DerivatedKeyPair } from './types';
+import { isValidDerivationPath, replaceDerive } from './utils';
 
 const INVALID_DERIVATION_PATH = 'Invalid derivation path';
 const INVALID_LENGTH = (el: string, length: number) => `${el} should be ${length} bytes length`;
@@ -16,7 +16,7 @@ export class KeyDerivation {
 
   private _seedHex: string;
 
-  static getMasterKeyFromSeed(seed: string | Buffer | Uint8Array, encoding: BufferEncoding = 'hex'): DerivedKeyPair {
+  static getMasterKeyFromSeed(seed: string | Buffer | Uint8Array, encoding: BufferEncoding = 'hex'): DerivatedKeyPair {
     let seedBuffer: Buffer;
     if (seed instanceof Uint8Array) {
       seedBuffer = Buffer.from(seed);
@@ -32,13 +32,13 @@ export class KeyDerivation {
     const IL = I.slice(0, 32);
     const IR = I.slice(32);
     return {
-      key: bufferToUint8Array(IL),
-      chainCode: bufferToUint8Array(IR),
+      key: Uint8Array.from(IL),
+      chainCode: Uint8Array.from(IR),
       derivationPath: '',
     };
   }
 
-  static childKeyDerivation(parentKeys: DerivedKeyPair, index: number): DerivedKeyPair {
+  static childKeyDerivation(parentKeys: DerivatedKeyPair, index: number): DerivatedKeyPair {
     const { key, chainCode, derivationPath } = parentKeys;
     if (key.length !== this.keyLength) {
       throw new TypeError(INVALID_LENGTH('Key', this.keyLength));
@@ -53,13 +53,13 @@ export class KeyDerivation {
     const IL = I.slice(0, 32);
     const IR = I.slice(32);
     return {
-      key: bufferToUint8Array(IL),
-      chainCode: bufferToUint8Array(IR),
+      key: Uint8Array.from(IL),
+      chainCode: Uint8Array.from(IR),
       derivationPath,
     };
   }
 
-  static derivePath(path: string, seed: string): DerivedKeyPair {
+  static derivePath(path: string, seed: string): DerivatedKeyPair {
     if (!isValidDerivationPath(path)) {
       throw new Error(INVALID_DERIVATION_PATH);
     }
@@ -80,23 +80,23 @@ export class KeyDerivation {
     this._seedHex = seedHex;
   }
 
-  getMasterKey(): DerivedKeyPair {
+  getMasterKey(): DerivatedKeyPair {
     return KeyDerivation.getMasterKeyFromSeed(this._seedHex);
   }
 
-  derive(derivationPath: string): DerivedKeyPair {
+  derive(derivationPath: string): DerivatedKeyPair {
     return KeyDerivation.derivePath(derivationPath, this._seedHex);
   }
 
-  getBaseKey(): DerivedKeyPair {
+  getBaseKey(): DerivatedKeyPair {
     return this.derive(`${BIG_CHAIN_DERIVATION_PATH}`);
   }
 
-  getAccountKey(account: number): DerivedKeyPair {
+  getAccountKey(account: number): DerivatedKeyPair {
     return this.derive(`${BIG_CHAIN_DERIVATION_PATH}/${account}'`);
   }
 
-  getAccountChildKey(account: number, index: number, chain: Chain = 0): DerivedKeyPair {
+  getAccountChildKey(account: number, index: number, chain: Chain = 0): DerivatedKeyPair {
     return this.derive(`${BIG_CHAIN_DERIVATION_PATH}/${account}'/${chain}'/${index}'`);
   }
 }

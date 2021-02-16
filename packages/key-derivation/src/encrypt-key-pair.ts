@@ -4,14 +4,14 @@ import { box, BoxKeyPair as NaclBoxKeyPair } from 'tweetnacl';
 import { KeyDerivation } from './key-derivation';
 import { SignKeyPair } from './sign-key-pair';
 import {
-  DerivedKeyPair,
+  DerivatedKeyPair,
   EncryptKeyPairFactory,
   EncryptKeyPairObject,
   KeyEncodingMap,
   KeyPair,
   KeyPairDerivationOptions,
 } from './types';
-import { base58Decode, encodeKey, bufferToUint8Array, toUint8Array } from './utils';
+import { base58Decode, encodeKey, toUint8Array } from './utils';
 
 const INVALID_LENGTH = (el: string, length: number) => `${el} should be ${length} bytes length`;
 
@@ -31,25 +31,25 @@ export class EncryptKeyPair {
   controller?: string;
 
   static getMasterKeyPair(seedHex: string): EncryptKeyPair {
-    const derivedKeyPair = KeyDerivation.getMasterKeyFromSeed(seedHex, 'hex');
-    return EncryptKeyPair.fromDerivedKeyPair(derivedKeyPair);
+    const derivatedKeyPair = KeyDerivation.getMasterKeyFromSeed(seedHex, 'hex');
+    return EncryptKeyPair.fromDerivatedKeyPair(derivatedKeyPair);
   }
 
-  static getDerivedKeyPair(seedHex: string, options: KeyPairDerivationOptions = {}): EncryptKeyPair {
+  static getDerivatedKeyPair(seedHex: string, options: KeyPairDerivationOptions = {}): EncryptKeyPair {
     const { account, index, chain = 0 } = options;
     const keyDerivation = new KeyDerivation(seedHex);
-    let derivedKeyPair: DerivedKeyPair;
+    let derivatedKeyPair: DerivatedKeyPair;
     if (typeof account == 'number' && typeof index === 'number') {
-      derivedKeyPair = keyDerivation.getAccountChildKey(account, index, chain);
+      derivatedKeyPair = keyDerivation.getAccountChildKey(account, index, chain);
     } else if (typeof account == 'number') {
-      derivedKeyPair = keyDerivation.getAccountKey(account);
+      derivatedKeyPair = keyDerivation.getAccountKey(account);
     } else {
-      derivedKeyPair = keyDerivation.getBaseKey();
+      derivatedKeyPair = keyDerivation.getBaseKey();
     }
-    return EncryptKeyPair.fromDerivedKeyPair(derivedKeyPair);
+    return EncryptKeyPair.fromDerivatedKeyPair(derivatedKeyPair);
   }
 
-  static fromDerivedKeyPair(keyPair: DerivedKeyPair): EncryptKeyPair {
+  static fromDerivatedKeyPair(keyPair: DerivatedKeyPair): EncryptKeyPair {
     const { chainCode, key, derivationPath } = keyPair;
     if (derivationPath && !(typeof derivationPath === 'string')) {
       throw new TypeError('`derivationPath` must be string.');
@@ -61,7 +61,7 @@ export class EncryptKeyPair {
       throw new TypeError(INVALID_LENGTH('ChainCode', KeyDerivation.chainCodeLength));
     }
 
-    const signingKeyPair = SignKeyPair.fromDerivedKeyPair({ key, chainCode, derivationPath });
+    const signingKeyPair = SignKeyPair.fromDerivatedKeyPair({ key, chainCode, derivationPath });
     const publicKey = EncryptKeyPair.convertPublicKeyToCurve(signingKeyPair.publicKey);
     const privateKey = EncryptKeyPair.convertPrivateKeyToCurve(signingKeyPair.fullPrivateKey);
     return new EncryptKeyPair({ chainCode, derivationPath, publicKey, privateKey });
@@ -106,7 +106,7 @@ export class EncryptKeyPair {
     }
 
     // TODO: find a way to pass derivationPath ?
-    return new EncryptKeyPair({ publicKey: bufferToUint8Array(buffer.slice(2)) });
+    return new EncryptKeyPair({ publicKey: Uint8Array.from(buffer.slice(2)) });
   }
 
   static generate(

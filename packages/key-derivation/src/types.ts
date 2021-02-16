@@ -21,7 +21,7 @@ export type KeyPair = {
   privateKey: Uint8Array;
 };
 
-export type DerivedKeyPair = {
+export type DerivatedKeyPair = {
   key: Uint8Array;
   chainCode: Uint8Array;
   derivationPath: string;
