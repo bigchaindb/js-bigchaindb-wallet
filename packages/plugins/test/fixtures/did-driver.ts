@@ -57,7 +57,7 @@ export const cases = {
       },
     },
   },
-  fromDerivedKeyPair: {
+  fromDerivatedKeyPair: {
     didDoc: {
       '@context': ['https://w3id.org/did/v0.11'],
       id: 'did:key:z6MkfvS8vFyiyeutQTZKtGATttdtKci4QynReKznTjSHTbZe',
