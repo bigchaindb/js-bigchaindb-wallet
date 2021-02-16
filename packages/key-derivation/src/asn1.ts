@@ -1,6 +1,7 @@
 /*  Typescript interpration of node-forge asn1 lib */
 
 import { ByteStringBuffer } from './bytestring-buffer';
+import { oids } from './oids';
 
 /**
  * ASN.1 classes.
@@ -40,7 +41,7 @@ export enum ASN1Type {
   BMPSTRING = 30,
 }
 
-export type AsnObject = {
+export interface AsnObject {
   tagClass: ASN1Class;
   type: ASN1Type;
   constructed: boolean;
@@ -49,8 +50,20 @@ export type AsnObject = {
   // bitStringContents?: string | Buffer;
   bitStringContents?: string;
   original?: string | AsnObject | (string | AsnObject)[];
-};
+}
 
+export interface ValidatorAsnObject extends Omit<AsnObject, 'value'> {
+  value: ValidatorAsnObject | ValidatorAsnObject[];
+  name?: string;
+  capture?: string;
+  captureAsn1?: string;
+  captureBitStringContents?: string;
+  captureBitStringValue?: string;
+  optional?: boolean;
+}
+
+// regex for testing for non-latin characters
+const _nonLatinRegex = /[^\\u0000-\\u00ff]/;
 export class asn1 {
   static create(
     tagClass: ASN1Class,
@@ -352,4 +365,286 @@ export class asn1 {
     (error as any).integer = x;
     throw error;
   }
+
+  /**
+   * Converts a DER-encoded byte buffer to a javascript integer. This is
+   * typically used to decode the value of an INTEGER type.
+   */
+  static derToInteger(bytes: ByteStringBuffer): number {
+    // wrap in buffer if needed
+    if (typeof bytes === 'string') {
+      bytes = new ByteStringBuffer(bytes);
+    }
+    const n = bytes.length() * 8;
+    if (n > 32) {
+      throw new Error('Integer too large; max is 32-bits.');
+    }
+    return bytes.getSignedInt(n);
+  }
+  /**
+   * Validates that the given ASN.1 object is at least a super set of the
+   * given ASN.1 structure. Only tag classes and types are checked. An
+   * optional map may also be provided to capture ASN.1 values while the
+   * structure is checked.
+   *
+   * To capture an ASN.1 value, set an object in the validator's 'capture'
+   * parameter to the key to use in the capture map. To capture the full
+   * ASN.1 object, specify 'captureAsn1'. To capture BIT STRING bytes, including
+   * the leading unused bits counter byte, specify 'captureBitStringContents'.
+   * To capture BIT STRING bytes, without the leading unused bits counter byte,
+   * specify 'captureBitStringValue'.
+   *
+   * Objects in the validator may set a field 'optional' to true to indicate
+   * that it isn't necessary to pass validation.
+   */
+  static validate(obj: AsnObject, v: ValidatorAsnObject, capture: Record<string, any>, errors: string[]): boolean {
+    let rval = false;
+    // ensure tag class and type are the same if specified
+    if (
+      (obj.tagClass === v.tagClass || typeof v.tagClass === 'undefined') &&
+      (obj.type === v.type || typeof v.type === 'undefined')
+    ) {
+      // ensure constructed flag is the same if specified
+      if (obj.constructed === v.constructed || typeof v.constructed === 'undefined') {
+        // obj.value = obj.value as AsnObject[]
+        rval = true;
+
+        // handle sub values
+        if (v.value && Array.isArray(v.value)) {
+          let j = 0;
+          for (let i = 0; rval && i < v.value.length; ++i) {
+            rval = v.value[i].optional || false;
+            if (obj.value[j]) {
+              rval = this.validate(obj.value[j], v.value[i], capture, errors);
+              if (rval) {
+                ++j;
+              } else if (v.value[i].optional) {
+                rval = true;
+              }
+            }
+            if (!rval && errors) {
+              errors.push(
+                `[${v.name}] Tag class "${v.tagClass}", type "${v.type}" expected value length "${
+                  v.value.length
+                }", got "${(obj.value as any).length}"`,
+              );
+            }
+          }
+        }
+
+        if (rval && capture) {
+          if (v.capture) {
+            capture[v.capture] = obj.value;
+          }
+          if (v.captureAsn1) {
+            capture[v.captureAsn1] = obj;
+          }
+          if (v.captureBitStringContents && 'bitStringContents' in obj) {
+            capture[v.captureBitStringContents] = obj.bitStringContents;
+          }
+          if (v.captureBitStringValue && 'bitStringContents' in obj) {
+            // let value;
+            if (obj.bitStringContents.length < 2) {
+              capture[v.captureBitStringValue] = '';
+            } else {
+              // FIXME: support unused bits with data shifting
+              let unused = obj.bitStringContents.charCodeAt(0);
+              if (unused !== 0) {
+                throw new Error('captureBitStringValue only supported for zero unused bits');
+              }
+              capture[v.captureBitStringValue] = obj.bitStringContents.slice(1);
+            }
+          }
+        }
+      } else if (errors) {
+        errors.push(`[${v.name}] Expected constructed "${v.constructed}", got "${obj.constructed}"`);
+      }
+    } else if (errors) {
+      if (obj.tagClass !== v.tagClass) {
+        errors.push(`[${v.name}] Expected tag class "${v.tagClass}", got "${obj.tagClass}"`);
+      }
+      if (obj.type !== v.type) {
+        errors.push(`[${v.name}] Expected type "${v.type}", got "${obj.type}"`);
+      }
+    }
+    return rval;
+  }
+
+  /**
+   * Pretty prints an ASN.1 object to a string.
+   */
+  static prettyPrint = function (obj: AsnObject, level = 0, indentation = 2): string {
+    let rval = '';
+    // start new line for deep levels
+    if (level > 0) {
+      rval += '\n';
+    }
+
+    let indent = '';
+    for (let i = 0; i < level * indentation; ++i) {
+      indent += ' ';
+    }
+
+    // print class:type
+    rval += indent + 'Tag: ';
+    switch (obj.tagClass) {
+      case ASN1Class.UNIVERSAL:
+        rval += 'Universal:';
+        break;
+      case ASN1Class.APPLICATION:
+        rval += 'Application:';
+        break;
+      case ASN1Class.CONTEXT_SPECIFIC:
+        rval += 'Context-Specific:';
+        break;
+      case ASN1Class.PRIVATE:
+        rval += 'Private:';
+        break;
+    }
+
+    if (obj.tagClass === ASN1Class.UNIVERSAL) {
+      rval += obj.type;
+
+      // known types
+      switch (obj.type) {
+        case ASN1Type.NONE:
+          rval += ' (None)';
+          break;
+        case ASN1Type.BOOLEAN:
+          rval += ' (Boolean)';
+          break;
+        case ASN1Type.INTEGER:
+          rval += ' (Integer)';
+          break;
+        case ASN1Type.BITSTRING:
+          rval += ' (Bit string)';
+          break;
+        case ASN1Type.OCTETSTRING:
+          rval += ' (Octet string)';
+          break;
+        case ASN1Type.NULL:
+          rval += ' (Null)';
+          break;
+        case ASN1Type.OID:
+          rval += ' (Object Identifier)';
+          break;
+        case ASN1Type.ODESC:
+          rval += ' (Object Descriptor)';
+          break;
+        case ASN1Type.EXTERNAL:
+          rval += ' (External or Instance of)';
+          break;
+        case ASN1Type.REAL:
+          rval += ' (Real)';
+          break;
+        case ASN1Type.ENUMERATED:
+          rval += ' (Enumerated)';
+          break;
+        case ASN1Type.EMBEDDED:
+          rval += ' (Embedded PDV)';
+          break;
+        case ASN1Type.UTF8:
+          rval += ' (UTF8)';
+          break;
+        case ASN1Type.ROID:
+          rval += ' (Relative Object Identifier)';
+          break;
+        case ASN1Type.SEQUENCE:
+          rval += ' (Sequence)';
+          break;
+        case ASN1Type.SET:
+          rval += ' (Set)';
+          break;
+        case ASN1Type.PRINTABLESTRING:
+          rval += ' (Printable String)';
+          break;
+        case ASN1Type.IA5STRING:
+          rval += ' (IA5String (ASCII))';
+          break;
+        case ASN1Type.UTCTIME:
+          rval += ' (UTC time)';
+          break;
+        case ASN1Type.GENERALIZEDTIME:
+          rval += ' (Generalized time)';
+          break;
+        case ASN1Type.BMPSTRING:
+          rval += ' (BMP String)';
+          break;
+      }
+    } else {
+      rval += obj.type;
+    }
+
+    rval += '\n';
+    rval += `${indent} Constructed: '${obj.constructed}'\n`;
+
+    if (obj.composed) {
+      let subvalues = 0;
+      let sub = '';
+      obj.value = obj.value as (string | AsnObject)[];
+      for (let i = 0; i < obj.value.length; ++i) {
+        if (obj.value[i] !== undefined) {
+          subvalues += 1;
+          sub += this.prettyPrint(obj.value[i], level + 1, indentation);
+          if (i + 1 < obj.value.length) {
+            sub += ',';
+          }
+        }
+      }
+      rval += `${indent} Sub values: '${subvalues} ${sub}`;
+    } else {
+      obj.value = obj.value as string;
+      rval += indent + 'Value: ';
+      if (obj.type === ASN1Type.OID) {
+        const oid = this.derToOid(obj.value);
+        rval += oid;
+        if (oids) {
+          if (oid in oids) {
+            rval += ` (' ${oids[oid]} ') `;
+          }
+        }
+      }
+      if (obj.type === ASN1Type.INTEGER) {
+        try {
+          rval += this.derToInteger(obj.value);
+        } catch (ex) {
+          rval += '0x' + new ByteStringBuffer(obj.value).toHex();
+        }
+      } else if (obj.type === ASN1Type.BITSTRING) {
+        // TODO: shift bits as needed to display without padding
+        if (obj.value.length > 1) {
+          // remove unused bits field
+          rval += '0x' + new ByteStringBuffer(obj.value.slice(1)).toHex();
+        } else {
+          rval += '(none)';
+        }
+        // show unused bit count
+        if (obj.value.length > 0) {
+          var unused = obj.value.charCodeAt(0);
+          if (unused == 1) {
+            rval += ' (1 unused bit shown)';
+          } else if (unused > 1) {
+            rval += ' (' + unused + ' unused bits shown)';
+          }
+        }
+      } else if (obj.type === ASN1Type.OCTETSTRING) {
+        if (!_nonLatinRegex.test(obj.value)) {
+          rval += '(' + obj.value + ') ';
+        }
+        rval += '0x' + new ByteStringBuffer(obj.value).toHex();
+      } else if (obj.type === ASN1Type.UTF8) {
+        rval += new ByteStringBuffer(obj.value).toString();
+      } else if (obj.type === ASN1Type.PRINTABLESTRING || obj.type === ASN1Type.IA5STRING) {
+        rval += obj.value;
+      } else if (_nonLatinRegex.test(obj.value)) {
+        rval += '0x' + new ByteStringBuffer(obj.value).toHex();
+      } else if (obj.value.length === 0) {
+        rval += '[null]';
+      } else {
+        rval += obj.value;
+      }
+    }
+
+    return rval;
+  };
 }
