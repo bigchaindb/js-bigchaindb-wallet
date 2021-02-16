@@ -448,7 +448,7 @@ export class asn1 {
               capture[v.captureBitStringValue] = '';
             } else {
               // FIXME: support unused bits with data shifting
-              let unused = obj.bitStringContents.charCodeAt(0);
+              const unused = obj.bitStringContents.charCodeAt(0);
               if (unused !== 0) {
                 throw new Error('captureBitStringValue only supported for zero unused bits');
               }
@@ -620,7 +620,7 @@ export class asn1 {
         }
         // show unused bit count
         if (obj.value.length > 0) {
-          var unused = obj.value.charCodeAt(0);
+          const unused = obj.value.charCodeAt(0);
           if (unused == 1) {
             rval += ' (1 unused bit shown)';
           } else if (unused > 1) {

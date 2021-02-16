@@ -1,5 +1,4 @@
 import { generateMnemonic, mnemonicToSeedSync, validateMnemonic, wordlists } from 'bip39';
-import { Ed25519Sha256 } from 'crypto-conditions';
 import { EncryptKeyPair } from './encrypt-key-pair';
 import { HARDENED_OFFSET, KeyDerivation } from './key-derivation';
 import { SignKeyPair } from './sign-key-pair';
@@ -16,9 +15,6 @@ const ENTROPY_BITS = 256;
 const INVALID_SEED = 'Invalid seed (must be a Buffer or hex string)';
 const INVALID_MNEMONIC = 'Invalid mnemonic (see bip39)';
 const INVALID_LANGUAGE = (language: string) => `${language} is not listed in bip39 module`;
-
-// export type KeyEncoding = keyof KeyEncodingMap;
-// export type EncodedKey<K extends keyof KeyEncodingMap = 'default'> = ReturnType<KeyEncodingMap[K]>;
 
 export class BigChainWallet {
   private _seedHex: string;
@@ -141,7 +137,7 @@ export class BigChainWallet {
     return BigChainWallet.derivatedKeyPairFactoryFromSeed<P>(type, this._seedHex, options);
   }
 
-  getDerivedPublicKey<K extends keyof KeyEncodingMap = 'default', P extends keyof DerivationKeyPairMap = 'sign'>(
+  getDerivatedPublicKey<K extends keyof KeyEncodingMap = 'default', P extends keyof DerivationKeyPairMap = 'sign'>(
     type: P,
     options: KeyPairDerivationOptions = {},
     encoding?: K,
@@ -149,7 +145,7 @@ export class BigChainWallet {
     return this.getDerivatedKeyPair(type, options).publicKey<K>(encoding);
   }
 
-  getDerivedPrivateKey<K extends keyof KeyEncodingMap = 'default', P extends keyof DerivationKeyPairMap = 'sign'>(
+  getDerivatedPrivateKey<K extends keyof KeyEncodingMap = 'default', P extends keyof DerivationKeyPairMap = 'sign'>(
     type: P,
     options: KeyPairDerivationOptions = {},
     encoding?: K,
@@ -157,7 +153,7 @@ export class BigChainWallet {
     return this.getDerivatedKeyPair(type, options).privateKey<K>(encoding);
   }
 
-  getDerivedChainCode<K extends keyof KeyEncodingMap = 'default', P extends keyof DerivationKeyPairMap = 'sign'>(
+  getDerivatedChainCode<K extends keyof KeyEncodingMap = 'default', P extends keyof DerivationKeyPairMap = 'sign'>(
     type: P,
     options: KeyPairDerivationOptions = {},
     encoding?: K,
@@ -165,7 +161,7 @@ export class BigChainWallet {
     return this.getDerivatedKeyPair(type, options).chainCode<K>(encoding);
   }
 
-  getDerivedFullPrivateKey<K extends keyof KeyEncodingMap = 'default', P extends keyof DerivationKeyPairMap = 'sign'>(
+  getDerivatedFullPrivateKey<K extends keyof KeyEncodingMap = 'default', P extends keyof DerivationKeyPairMap = 'sign'>(
     type: P,
     options: KeyPairDerivationOptions = {},
     encoding?: K,
@@ -174,27 +170,5 @@ export class BigChainWallet {
       throw new Error('Full private key is only supported for type sign');
     }
     return this.getDerivatedKeyPair(type, options).fullPrivateKey<K>(encoding);
-  }
-
-  signTransaction(): (
-    transaction: Record<string, unknown>,
-    input: Record<string, unknown>,
-    transactionHash: string,
-  ) => string {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const self = this;
-    return function sign(
-      _transaction: Record<string, unknown>,
-      _input: Record<string, unknown>,
-      transactionHash: string,
-    ) {
-      // TODO: retrieve proper key based on input, transaction ?
-      //! cast cheat due to crypto-conditions lib
-      const privateKeyBuffer = (self.getDerivedPrivateKey('sign') as unknown) as string;
-      const ed25519Fulfillment = new Ed25519Sha256();
-      ed25519Fulfillment.sign(Buffer.from(transactionHash, 'hex'), privateKeyBuffer);
-      const fulfillmentUri = ed25519Fulfillment.serializeUri();
-      return fulfillmentUri;
-    };
   }
 }

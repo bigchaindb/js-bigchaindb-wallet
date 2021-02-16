@@ -37,19 +37,23 @@ const specTestCase = (num: number) => () => {
 
   it('should derives expected child keys', () => {
     testCase.keyPairs.forEach(([publicKey, privateKey], index) => {
-      const derivedSignKeyPair = wallet.getDerivatedKeyPair('sign', { account: index });
-      assertKeypair(derivedSignKeyPair, publicKey, privateKey);
+      const derivatedSignKeyPair = wallet.getDerivatedKeyPair('sign', { account: index });
+      assertKeypair(derivatedSignKeyPair, publicKey, privateKey);
 
       const childIndex = 1;
-      const derivedChildSignKeyPair = BigChainWallet.getDerivatedKeyPair('sign', derivedSignKeyPair, childIndex);
-      const derivedChildEncryptKeyPair = BigChainWallet.getDerivatedKeyPair('encrypt', derivedSignKeyPair, childIndex);
+      const derivatedChildSignKeyPair = BigChainWallet.getDerivatedKeyPair('sign', derivatedSignKeyPair, childIndex);
+      const derivatedChildEncryptKeyPair = BigChainWallet.getDerivatedKeyPair(
+        'encrypt',
+        derivatedSignKeyPair,
+        childIndex,
+      );
       const expectedChildKeyPair = KeyDerivation.derivePath(
         `${BIG_CHAIN_DERIVATION_PATH}/${index}'/${childIndex}'/0'`,
         seedHex,
       );
 
-      assertChildKeypair(derivedChildSignKeyPair, SignKeyPair.fromDerivatedKeyPair(expectedChildKeyPair));
-      assertChildKeypair(derivedChildEncryptKeyPair, EncryptKeyPair.fromDerivatedKeyPair(expectedChildKeyPair));
+      assertChildKeypair(derivatedChildSignKeyPair, SignKeyPair.fromDerivatedKeyPair(expectedChildKeyPair));
+      assertChildKeypair(derivatedChildEncryptKeyPair, EncryptKeyPair.fromDerivatedKeyPair(expectedChildKeyPair));
     });
   });
 
