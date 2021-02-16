@@ -14,9 +14,9 @@ describe('DID Driver', function () {
   });
 
   it('Should generate DID doc from derived key pair', async () => {
-    const derivedKeyPair = KeyDerivation.derivePath(`${BIG_CHAIN_DERIVATION_PATH}/1'/1'/0'`, seedHex);
+    const derivatedKeyPair = KeyDerivation.derivePath(`${BIG_CHAIN_DERIVATION_PATH}/1'/1'/0'`, seedHex);
     const didDriver = new DidDriver();
-    const didDoc = await didDriver.generate({ derivedKeyPair });
+    const didDoc = await didDriver.generate({ derivatedKeyPair });
     expect(didDoc).toEqual(cases.fromDerivedKeyPair.didDoc);
     expect(didDoc.keys).toEqual(cases.fromDerivedKeyPair.didDocKeys);
   });

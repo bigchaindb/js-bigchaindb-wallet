@@ -1,6 +1,6 @@
 import {
   BigChainWallet,
-  DerivedKeyPair,
+  DerivatedKeyPair,
   EncryptKeyPair,
   KeyPairDerivationOptions,
   SignKeyPair,
@@ -120,18 +120,18 @@ export class DidDriver {
       keyType?: string;
       derivationOptions?: KeyPairDerivationOptions;
       seed?: string;
-      derivedKeyPair?: DerivedKeyPair;
+      derivatedKeyPair?: DerivatedKeyPair;
     } = {},
   ) {
-    const { keyType = SignKeyPair.suite, seed, derivationOptions, derivedKeyPair } = options;
+    const { keyType = SignKeyPair.suite, seed, derivationOptions, derivatedKeyPair } = options;
     if (keyType === SignKeyPair.suite) {
       let signKeyPairFactory: SignKeyPairFactory;
       if (seed && !derivationOptions) {
         signKeyPairFactory = BigChainWallet.masterKeyPairFactory('sign', seed);
       } else if (seed && derivationOptions) {
-        signKeyPairFactory = BigChainWallet.derivedKeyPairFactoryFromSeed('sign', seed, derivationOptions);
-      } else if (derivedKeyPair) {
-        signKeyPairFactory = BigChainWallet.derivedKeyPairFactory('sign', derivedKeyPair);
+        signKeyPairFactory = BigChainWallet.derivatedKeyPairFactoryFromSeed('sign', seed, derivationOptions);
+      } else if (derivatedKeyPair) {
+        signKeyPairFactory = BigChainWallet.derivatedKeyPairFactory('sign', derivatedKeyPair);
       } else {
         signKeyPairFactory = SignKeyPair.generate().factory();
       }
@@ -143,15 +143,15 @@ export class DidDriver {
     }
   }
 
-  async keyToDidDoc(options: { signKeyPair?: SignKeyPair; derivedKeyPair?: DerivedKeyPair }): Promise<DidDoc> {
-    const { signKeyPair, derivedKeyPair } = options;
+  async keyToDidDoc(options: { signKeyPair?: SignKeyPair; derivatedKeyPair?: DerivatedKeyPair }): Promise<DidDoc> {
+    const { signKeyPair, derivatedKeyPair } = options;
     let edKeyPair: SignKeyPair;
-    if (derivedKeyPair) {
-      edKeyPair = SignKeyPair.fromDerivedKeyPair(derivedKeyPair);
+    if (derivatedKeyPair) {
+      edKeyPair = SignKeyPair.fromDerivatedKeyPair(derivatedKeyPair);
     } else if (signKeyPair) {
       edKeyPair = signKeyPair;
-    } else if (!signKeyPair && !derivedKeyPair) {
-      throw new TypeError('`signKeyPair` or `derivedKeyPair` is required.');
+    } else if (!signKeyPair && !derivatedKeyPair) {
+      throw new TypeError('`signKeyPair` or `derivatedKeyPair` is required.');
     }
     const did = `did:key:${edKeyPair.getFingerprint()}`;
     const keyId = `${did}#${edKeyPair.getFingerprint()}`;
