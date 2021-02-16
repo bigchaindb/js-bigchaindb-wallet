@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.3](https://github.com/s1seven/js-bigchaindb-wallet/compare/@s1seven/js-bigchaindb-key-derivation@0.1.2...@s1seven/js-bigchaindb-key-derivation@0.1.3) (2021-02-16)
+
+
+### Bug Fixes
+
+* add validator and prettier for asn1 ([51a0a14](https://github.com/s1seven/js-bigchaindb-wallet/commit/51a0a14ead1e88f38474b08a6adc5f841b400d74))
+* derivedKey typo and use Uint8Array.from ([c6f8dfd](https://github.com/s1seven/js-bigchaindb-wallet/commit/c6f8dfde1a787507f759c831ba54582b2ab15d9e))
+
+
+
+
+
 ## [0.1.2](https://github.com/s1seven/js-bigchaindb-wallet/compare/@s1seven/js-bigchaindb-key-derivation@0.1.1...@s1seven/js-bigchaindb-key-derivation@0.1.2) (2021-02-02)
 
 **Note:** Version bump only for package @s1seven/js-bigchaindb-key-derivation
