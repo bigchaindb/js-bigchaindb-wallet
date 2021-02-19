@@ -1,7 +1,7 @@
 import * as base58 from 'bs58';
 import * as ed2curve from 'ed2curve';
 import { box, BoxKeyPair as NaclBoxKeyPair } from 'tweetnacl';
-import { KeyDerivation } from './key-derivation';
+import { KeyDerivation, X25519_CURVE } from './key-derivation';
 import { SignKeyPair } from './sign-key-pair';
 import {
   DerivatedKeyPair,
@@ -31,7 +31,7 @@ export class EncryptKeyPair {
   controller?: string;
 
   static getMasterKeyPair(seedHex: string): EncryptKeyPair {
-    const derivatedKeyPair = KeyDerivation.getMasterKeyFromSeed(seedHex, 'hex');
+    const derivatedKeyPair = KeyDerivation.getMasterKeyFromSeed(seedHex, 'encrypt', 'hex');
     return EncryptKeyPair.fromDerivatedKeyPair(derivatedKeyPair);
   }
 
@@ -40,17 +40,17 @@ export class EncryptKeyPair {
     const keyDerivation = new KeyDerivation(seedHex);
     let derivatedKeyPair: DerivatedKeyPair;
     if (typeof account == 'number' && typeof index === 'number') {
-      derivatedKeyPair = keyDerivation.getAccountChildKey(account, index, chain);
+      derivatedKeyPair = keyDerivation.getAccountChildKey(account, index, chain, 'encrypt');
     } else if (typeof account == 'number') {
-      derivatedKeyPair = keyDerivation.getAccountKey(account);
+      derivatedKeyPair = keyDerivation.getAccountKey(account, 'encrypt');
     } else {
-      derivatedKeyPair = keyDerivation.getBaseKey();
+      derivatedKeyPair = keyDerivation.getBaseKey('encrypt');
     }
     return EncryptKeyPair.fromDerivatedKeyPair(derivatedKeyPair);
   }
 
   static fromDerivatedKeyPair(keyPair: DerivatedKeyPair): EncryptKeyPair {
-    const { chainCode, key, derivationPath } = keyPair;
+    const { chainCode, curve, depth, key, derivationPath } = keyPair;
     if (derivationPath && !(typeof derivationPath === 'string')) {
       throw new TypeError('`derivationPath` must be string.');
     }
@@ -61,7 +61,13 @@ export class EncryptKeyPair {
       throw new TypeError(INVALID_LENGTH('ChainCode', KeyDerivation.chainCodeLength));
     }
 
-    const signingKeyPair = SignKeyPair.fromDerivatedKeyPair({ key, chainCode, derivationPath });
+    if (curve === X25519_CURVE) {
+      const publicKey = EncryptKeyPair.getPublicKey(key, false);
+      const privateKey = key;
+      return new EncryptKeyPair({ chainCode, derivationPath, publicKey, privateKey });
+    }
+    // throw new TypeError(`'curve' must be ${X25519_CURVE}.`);
+    const signingKeyPair = SignKeyPair.fromDerivatedKeyPair({ key, curve, chainCode, depth, derivationPath });
     const publicKey = EncryptKeyPair.convertPublicKeyToCurve(signingKeyPair.publicKey);
     const privateKey = EncryptKeyPair.convertPrivateKeyToCurve(signingKeyPair.fullPrivateKey);
     return new EncryptKeyPair({ chainCode, derivationPath, publicKey, privateKey });
@@ -106,7 +112,7 @@ export class EncryptKeyPair {
     }
 
     // TODO: find a way to pass derivationPath ?
-    return new EncryptKeyPair({ publicKey: Uint8Array.from(buffer.slice(2)) });
+    return new EncryptKeyPair({ publicKey: toUint8Array(buffer.slice(2)) });
   }
 
   static generate(
@@ -128,6 +134,24 @@ export class EncryptKeyPair {
       publicKey: keyPair.publicKey,
       privateKey: keyPair.secretKey,
     });
+  }
+
+  // TODO: test this one
+  static getPublicKey(privateKey: Uint8Array, withZeroByte = true): Uint8Array {
+    if (!privateKey || privateKey.length !== EncryptKeyPair.privateKeyLength) {
+      throw new TypeError(INVALID_LENGTH('PrivateKey', EncryptKeyPair.privateKeyLength));
+    }
+    const keyPair = box.keyPair.fromSecretKey(privateKey);
+    // const zero = Buffer.alloc(1, 0);
+    const zero = Buffer.from([0x40]);
+    const pubKeyBuffer = withZeroByte
+      ? Buffer.concat([zero, Buffer.from(keyPair.publicKey)])
+      : Buffer.from(keyPair.publicKey);
+    return toUint8Array(pubKeyBuffer);
+  }
+
+  static getSharedKey(secretKey: Uint8Array, publicKey: Uint8Array): Uint8Array {
+    return box.before(publicKey, secretKey);
   }
 
   static convertPublicKeyToCurve(publicKey: Uint8Array): Uint8Array {

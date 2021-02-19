@@ -1,11 +1,12 @@
 import { createHmac } from 'crypto';
-import { Chain, DerivatedKeyPair } from './types';
-import { isValidDerivationPath, replaceDerive } from './utils';
+import { Chain, DerivatedKeyPair, Purpose } from './types';
+import { isValidDerivationPath, replaceDerive, toUint8Array } from './utils';
 
 const INVALID_DERIVATION_PATH = 'Invalid derivation path';
 const INVALID_LENGTH = (el: string, length: number) => `${el} should be ${length} bytes length`;
-const ED25519_CURVE = 'ed25519 seed';
 
+export const ED25519_CURVE = 'ed25519 seed';
+export const X25519_CURVE = 'curve25519 seed';
 export const BIG_CHAIN_DERIVATION_PATH = `m/44'/822'`;
 export const HARDENED_OFFSET = 0x80000000;
 
@@ -16,25 +17,34 @@ export class KeyDerivation {
 
   private _seedHex: string;
 
-  static getMasterKeyFromSeed(seed: string | Buffer | Uint8Array, encoding: BufferEncoding = 'hex'): DerivatedKeyPair {
+  static getMasterKeyFromSeed(
+    seed: string | Buffer | Uint8Array,
+    purpose: Purpose = 'sign',
+    encoding: BufferEncoding = 'hex',
+  ): DerivatedKeyPair {
     let seedBuffer: Buffer;
-    if (seed instanceof Uint8Array) {
-      seedBuffer = Buffer.from(seed);
+    if (Buffer.isBuffer(seed)) {
+      seedBuffer = seed;
     } else if (typeof seed === 'string') {
       seedBuffer = Buffer.from(seed, encoding);
+    } else if (seed instanceof Uint8Array) {
+      seedBuffer = Buffer.from(seed);
+    } else {
+      throw new TypeError('Seed should be a string, a Buffer or a Uint8Array');
     }
-    // TODO: allow seed of 32, 48 and 64 bytes length
-    const hmac = createHmac('sha512', ED25519_CURVE);
-    if (seedBuffer.length !== this.seedLength) {
-      throw new TypeError(INVALID_LENGTH('Seed', this.seedLength));
-    }
-    const I = hmac.update(seedBuffer).digest();
+    // if (seedBuffer.length !== this.seedLength) {
+    //   throw new TypeError(INVALID_LENGTH('Seed', this.seedLength));
+    // }
+    const key = purpose === 'sign' ? ED25519_CURVE : X25519_CURVE;
+    const I = createHmac('sha512', key).update(seedBuffer).digest();
     const IL = I.slice(0, 32);
     const IR = I.slice(32);
     return {
-      key: Uint8Array.from(IL),
-      chainCode: Uint8Array.from(IR),
+      key: toUint8Array(IL),
+      chainCode: toUint8Array(IR),
       derivationPath: '',
+      curve: key,
+      depth: 0,
     };
   }
 
@@ -53,26 +63,37 @@ export class KeyDerivation {
     const IL = I.slice(0, 32);
     const IR = I.slice(32);
     return {
-      key: Uint8Array.from(IL),
-      chainCode: Uint8Array.from(IR),
-      derivationPath,
+      key: toUint8Array(IL),
+      chainCode: toUint8Array(IR),
+      // derivationPath,
+      derivationPath: `${derivationPath}/${index}'`,
+      curve: parentKeys.curve,
+      depth: parentKeys.depth + 1,
     };
   }
 
-  static derivePath(path: string, seed: string): DerivatedKeyPair {
+  static derivePath(
+    path: string,
+    seed: string,
+    purpose: Purpose = 'sign',
+    encoding: BufferEncoding = 'hex',
+    offset = HARDENED_OFFSET,
+  ): DerivatedKeyPair {
     if (!isValidDerivationPath(path)) {
       throw new Error(INVALID_DERIVATION_PATH);
     }
-    const { key, chainCode } = this.getMasterKeyFromSeed(seed);
+    const { key, chainCode, curve, depth } = this.getMasterKeyFromSeed(seed, purpose, encoding);
     const segments = path
       .split('/')
       .slice(1)
       .map(replaceDerive)
       .map((el) => parseInt(el, 10));
-    return segments.reduce((parentKeys, segment) => this.childKeyDerivation(parentKeys, segment + HARDENED_OFFSET), {
+    return segments.reduce((parentKeys, segment) => this.childKeyDerivation(parentKeys, segment + offset), {
       key,
       chainCode,
       derivationPath: path,
+      curve,
+      depth,
     });
   }
 
@@ -80,23 +101,23 @@ export class KeyDerivation {
     this._seedHex = seedHex;
   }
 
-  getMasterKey(): DerivatedKeyPair {
-    return KeyDerivation.getMasterKeyFromSeed(this._seedHex);
+  getMasterKey(purpose: Purpose = 'sign'): DerivatedKeyPair {
+    return KeyDerivation.getMasterKeyFromSeed(this._seedHex, purpose);
   }
 
-  derive(derivationPath: string): DerivatedKeyPair {
-    return KeyDerivation.derivePath(derivationPath, this._seedHex);
+  derive(derivationPath: string, purpose: Purpose = 'sign'): DerivatedKeyPair {
+    return KeyDerivation.derivePath(derivationPath, this._seedHex, purpose);
   }
 
-  getBaseKey(): DerivatedKeyPair {
-    return this.derive(`${BIG_CHAIN_DERIVATION_PATH}`);
+  getBaseKey(purpose: Purpose = 'sign'): DerivatedKeyPair {
+    return this.derive(`${BIG_CHAIN_DERIVATION_PATH}`, purpose);
   }
 
-  getAccountKey(account: number): DerivatedKeyPair {
-    return this.derive(`${BIG_CHAIN_DERIVATION_PATH}/${account}'`);
+  getAccountKey(account: number, purpose: Purpose = 'sign'): DerivatedKeyPair {
+    return this.derive(`${BIG_CHAIN_DERIVATION_PATH}/${account}'`, purpose);
   }
 
-  getAccountChildKey(account: number, index: number, chain: Chain = 0): DerivatedKeyPair {
-    return this.derive(`${BIG_CHAIN_DERIVATION_PATH}/${account}'/${chain}'/${index}'`);
+  getAccountChildKey(account: number, index: number, chain: Chain = 0, purpose: Purpose = 'sign'): DerivatedKeyPair {
+    return this.derive(`${BIG_CHAIN_DERIVATION_PATH}/${account}'/${chain}'/${index}'`, purpose);
   }
 }

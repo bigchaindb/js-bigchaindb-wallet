@@ -1,6 +1,6 @@
 import * as base58 from 'bs58';
 import { sign, SignKeyPair as NaclSignKeyPair } from 'tweetnacl';
-import { KeyDerivation } from './key-derivation';
+import { ED25519_CURVE, KeyDerivation } from './key-derivation';
 import {
   DerivatedKeyPair,
   KeyEncodingMap,
@@ -31,7 +31,7 @@ export class SignKeyPair {
   controller?: string;
 
   static getMasterKeyPair(seedHex: string): SignKeyPair {
-    const derivatedKeyPair = KeyDerivation.getMasterKeyFromSeed(seedHex, 'hex');
+    const derivatedKeyPair = KeyDerivation.getMasterKeyFromSeed(seedHex, 'sign', 'hex');
     return SignKeyPair.fromDerivatedKeyPair(derivatedKeyPair);
   }
 
@@ -40,17 +40,20 @@ export class SignKeyPair {
     const keyDerivation = new KeyDerivation(seedHex);
     let derivatedKeyPair: DerivatedKeyPair;
     if (typeof account == 'number' && typeof index === 'number') {
-      derivatedKeyPair = keyDerivation.getAccountChildKey(account, index, chain);
+      derivatedKeyPair = keyDerivation.getAccountChildKey(account, index, chain, 'sign');
     } else if (typeof account == 'number') {
-      derivatedKeyPair = keyDerivation.getAccountKey(account);
+      derivatedKeyPair = keyDerivation.getAccountKey(account, 'sign');
     } else {
-      derivatedKeyPair = keyDerivation.getBaseKey();
+      derivatedKeyPair = keyDerivation.getBaseKey('sign');
     }
     return SignKeyPair.fromDerivatedKeyPair(derivatedKeyPair);
   }
 
   static fromDerivatedKeyPair(keyPair: DerivatedKeyPair): SignKeyPair {
-    const { chainCode, key, derivationPath } = keyPair;
+    const { chainCode, curve, key, derivationPath } = keyPair;
+    if (curve !== ED25519_CURVE) {
+      throw new TypeError(`'curve' must be ${ED25519_CURVE}.`);
+    }
     if (derivationPath && !(typeof derivationPath === 'string')) {
       throw new TypeError('`derivationPath` must be string.');
     }
@@ -90,7 +93,7 @@ export class SignKeyPair {
     }
     // TODO: find a way to pass derivationPath ?
     return new SignKeyPair({
-      publicKey: Uint8Array.from(buffer.slice(2)),
+      publicKey: toUint8Array(buffer.slice(2)),
     });
   }
 
@@ -136,7 +139,7 @@ export class SignKeyPair {
     const signPk = keyPair.secretKey.subarray(32);
     const zero = Buffer.alloc(1, 0);
     const pubKeyBuffer = withZeroByte ? Buffer.concat([zero, Buffer.from(signPk)]) : Buffer.from(signPk);
-    return Uint8Array.from(pubKeyBuffer);
+    return toUint8Array(pubKeyBuffer);
   }
 
   static getFullPrivateKey(privateKey: Uint8Array, publicKey: Uint8Array): Uint8Array {

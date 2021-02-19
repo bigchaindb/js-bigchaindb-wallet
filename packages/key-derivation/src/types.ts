@@ -14,6 +14,8 @@ export type KeyEncodingMap = {
   default: () => Uint8Array;
 };
 
+export type Purpose = 'sign' | 'encrypt';
+
 export type KeyPairType = 'public' | 'private' | `fingerprint's`;
 
 export type KeyPair = {
@@ -25,6 +27,8 @@ export type DerivatedKeyPair = {
   key: Uint8Array;
   chainCode: Uint8Array;
   derivationPath: string;
+  curve: 'ed25519 seed' | 'curve25519 seed';
+  depth: number;
 };
 
 export type Chain = 0 | 1;
@@ -75,6 +79,11 @@ export type EncryptKeyPairObject = KeyPairObject & {
   fingerprint: string;
   derivationPath: string;
 };
+
+export enum CurvesSeed {
+  sign = 'ed25519 seed',
+  encrypt = 'curve25519 seed',
+}
 
 export type DerivationKeyPairMap = {
   sign: () => SignKeyPairFactory;

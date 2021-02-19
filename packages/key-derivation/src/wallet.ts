@@ -4,6 +4,7 @@ import { HARDENED_OFFSET, KeyDerivation } from './key-derivation';
 import { SignKeyPair } from './sign-key-pair';
 import {
   Chain,
+  CurvesSeed,
   DerivatedKeyPair,
   DerivationKeyPairMap,
   KeyEncodingMap,
@@ -110,13 +111,18 @@ export class BigChainWallet {
     chain: Chain = 0,
   ): ReturnType<DerivationKeyPairMap[P]> {
     const { privateKey, chainCode, derivationPath } = signKeyPair;
+    // TODO: validate derivationPath
     const segments = [index, chain];
+    const curve = CurvesSeed[type];
     const derivatedKeyPair = segments.reduce(
       (parentKeys, segment) => KeyDerivation.childKeyDerivation(parentKeys, segment + HARDENED_OFFSET),
       {
         key: privateKey(),
         chainCode: chainCode(),
-        derivationPath: `${derivationPath}/${chain}'/${index}'`,
+        // derivationPath: `${derivationPath}/${chain}'/${index}'`,
+        derivationPath,
+        curve,
+        depth: 3,
       },
     );
     return BigChainWallet.derivatedKeyPairFactory<P>(type, derivatedKeyPair);
