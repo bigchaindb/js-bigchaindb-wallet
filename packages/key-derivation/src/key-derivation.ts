@@ -42,22 +42,25 @@ export class KeyDerivation {
     return {
       key: toUint8Array(IL),
       chainCode: toUint8Array(IR),
-      derivationPath: '',
+      derivationPath: 'm',
       curve: key,
       depth: 0,
     };
   }
 
-  static childKeyDerivation(parentKeys: DerivatedKeyPair, index: number): DerivatedKeyPair {
-    const { key, chainCode, derivationPath } = parentKeys;
+  static childKeyDerivation(parentKeys: DerivatedKeyPair, index: number, offset = HARDENED_OFFSET): DerivatedKeyPair {
+    const { key, chainCode } = parentKeys;
+    let { derivationPath } = parentKeys;
     if (key.length !== this.keyLength) {
       throw new TypeError(INVALID_LENGTH('Key', this.keyLength));
     }
     if (chainCode.length !== this.chainCodeLength) {
       throw new TypeError(INVALID_LENGTH('ChainCode', this.chainCodeLength));
     }
+    derivationPath += `/${index}'`;
+    const offsetIndex = index + offset;
     const indexBuffer = Buffer.allocUnsafe(4);
-    indexBuffer.writeUInt32BE(index, 0);
+    indexBuffer.writeUInt32BE(offsetIndex, 0);
     const data = Buffer.concat([Buffer.alloc(1, 0), key, indexBuffer]);
     const I = createHmac('sha512', chainCode).update(data).digest();
     const IL = I.slice(0, 32);
@@ -65,8 +68,7 @@ export class KeyDerivation {
     return {
       key: toUint8Array(IL),
       chainCode: toUint8Array(IR),
-      // derivationPath,
-      derivationPath: `${derivationPath}/${index}'`,
+      derivationPath,
       curve: parentKeys.curve,
       depth: parentKeys.depth + 1,
     };
@@ -82,16 +84,17 @@ export class KeyDerivation {
     if (!isValidDerivationPath(path)) {
       throw new Error(INVALID_DERIVATION_PATH);
     }
-    const { key, chainCode, curve, depth } = this.getMasterKeyFromSeed(seed, purpose, encoding);
+    const { key, chainCode, curve, depth, derivationPath } = this.getMasterKeyFromSeed(seed, purpose, encoding);
     const segments = path
       .split('/')
       .slice(1)
       .map(replaceDerive)
       .map((el) => parseInt(el, 10));
-    return segments.reduce((parentKeys, segment) => this.childKeyDerivation(parentKeys, segment + offset), {
+
+    return segments.reduce((parentKeys, segment) => this.childKeyDerivation(parentKeys, segment, offset), {
       key,
       chainCode,
-      derivationPath: path,
+      derivationPath,
       curve,
       depth,
     });

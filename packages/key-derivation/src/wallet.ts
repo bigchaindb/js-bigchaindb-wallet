@@ -1,6 +1,7 @@
 import { generateMnemonic, mnemonicToSeedSync, validateMnemonic, wordlists } from 'bip39';
+import { EncryptKeyPairFactory } from 'key-derivation/dist';
 import { EncryptKeyPair } from './encrypt-key-pair';
-import { HARDENED_OFFSET, KeyDerivation } from './key-derivation';
+import { KeyDerivation } from './key-derivation';
 import { SignKeyPair } from './sign-key-pair';
 import {
   Chain,
@@ -21,7 +22,6 @@ export class BigChainWallet {
   private _seedHex: string;
   // TODO: networkUrl: string;
 
-  // MNEMONIC
   static createMnemonic(
     strength: number = ENTROPY_BITS,
     language = 'english',
@@ -103,23 +103,22 @@ export class BigChainWallet {
     return derivationKeyPairMap[type]() as ReturnType<DerivationKeyPairMap[P]>;
   }
 
-  // Go deeper in derivationPath after `m/44'/822'/accountId'`
+  // Go deeper in key space after `m/44'/822'/accountId'`
   static getDerivatedKeyPair<P extends keyof DerivationKeyPairMap = 'sign'>(
     type: P,
-    signKeyPair: SignKeyPairFactory,
+    parentKeyPair: SignKeyPairFactory | EncryptKeyPairFactory,
     index: number,
     chain: Chain = 0,
   ): ReturnType<DerivationKeyPairMap[P]> {
-    const { privateKey, chainCode, derivationPath } = signKeyPair;
+    const { privateKey, chainCode, derivationPath } = parentKeyPair;
     // TODO: validate derivationPath
-    const segments = [index, chain];
+    const segments = [chain, index];
     const curve = CurvesSeed[type];
     const derivatedKeyPair = segments.reduce(
-      (parentKeys, segment) => KeyDerivation.childKeyDerivation(parentKeys, segment + HARDENED_OFFSET),
+      (parentKeys, segment) => KeyDerivation.childKeyDerivation(parentKeys, segment),
       {
         key: privateKey(),
         chainCode: chainCode(),
-        // derivationPath: `${derivationPath}/${chain}'/${index}'`,
         derivationPath,
         curve,
         depth: 3,
