@@ -1,12 +1,12 @@
 import { createHmac } from 'crypto';
-import { Chain, DerivatedKeyPair, Purpose } from './types';
+import { Chain, CurvesSeed, DerivatedKeyPair, Purpose } from './types';
 import { isValidDerivationPath, replaceDerive, toUint8Array } from './utils';
 
 const INVALID_DERIVATION_PATH = 'Invalid derivation path';
 const INVALID_LENGTH = (el: string, length: number) => `${el} should be ${length} bytes length`;
 
-export const ED25519_CURVE = 'ed25519 seed';
-export const X25519_CURVE = 'curve25519 seed';
+export const ED25519_CURVE = CurvesSeed.sign;
+export const X25519_CURVE = CurvesSeed.encrypt;
 export const BIG_CHAIN_DERIVATION_PATH = `m/44'/822'`;
 export const HARDENED_OFFSET = 0x80000000;
 

@@ -1,5 +1,4 @@
 import { generateMnemonic, mnemonicToSeedSync, validateMnemonic, wordlists } from 'bip39';
-import { EncryptKeyPairFactory } from 'key-derivation/dist';
 import { EncryptKeyPair } from './encrypt-key-pair';
 import { KeyDerivation } from './key-derivation';
 import { SignKeyPair } from './sign-key-pair';
@@ -8,6 +7,7 @@ import {
   CurvesSeed,
   DerivatedKeyPair,
   DerivationKeyPairMap,
+  EncryptKeyPairFactory,
   KeyEncodingMap,
   KeyPairDerivationOptions,
   SignKeyPairFactory,
@@ -113,7 +113,7 @@ export class BigChainWallet {
     const { privateKey, chainCode, derivationPath } = parentKeyPair;
     // TODO: validate derivationPath
     const segments = [chain, index];
-    const curve = CurvesSeed[type];
+    const curve = CurvesSeed[type] as CurvesSeed;
     const derivatedKeyPair = segments.reduce(
       (parentKeys, segment) => KeyDerivation.childKeyDerivation(parentKeys, segment),
       {
