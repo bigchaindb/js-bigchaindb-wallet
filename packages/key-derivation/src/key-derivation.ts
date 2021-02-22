@@ -14,8 +14,8 @@ export class KeyDerivation {
   static readonly keyLength = 32;
   static readonly seedLength = 64;
   static readonly chainCodeLength = 32;
-
-  private _seedHex: string;
+  private encoding: BufferEncoding;
+  private _seed: string;
 
   static getMasterKeyFromSeed(
     seed: string | Buffer | Uint8Array,
@@ -100,16 +100,17 @@ export class KeyDerivation {
     });
   }
 
-  constructor(seedHex: string) {
-    this._seedHex = seedHex;
+  constructor(seed: string, encoding: BufferEncoding = 'hex') {
+    this._seed = seed;
+    this.encoding = encoding;
   }
 
   getMasterKey(purpose: Purpose = 'sign'): DerivatedKeyPair {
-    return KeyDerivation.getMasterKeyFromSeed(this._seedHex, purpose);
+    return KeyDerivation.getMasterKeyFromSeed(this._seed, purpose, this.encoding);
   }
 
   derive(derivationPath: string, purpose: Purpose = 'sign'): DerivatedKeyPair {
-    return KeyDerivation.derivePath(derivationPath, this._seedHex, purpose);
+    return KeyDerivation.derivePath(derivationPath, this._seed, purpose, this.encoding);
   }
 
   getBaseKey(purpose: Purpose = 'sign'): DerivatedKeyPair {
