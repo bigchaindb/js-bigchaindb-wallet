@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.4](https://github.com/s1seven/js-bigchaindb-wallet/compare/@s1seven/js-bigchaindb-wallet-plugins@0.2.3...@s1seven/js-bigchaindb-wallet-plugins@0.2.4) (2021-02-22)
+
+
+### Bug Fixes
+
+* typo ([dcb149a](https://github.com/s1seven/js-bigchaindb-wallet/commit/dcb149a6607eff53f0b837429fb213a6ae0ad245))
+
+
+
+
+
 ## [0.2.3](https://github.com/s1seven/js-bigchaindb-wallet/compare/@s1seven/js-bigchaindb-wallet-plugins@0.2.2...@s1seven/js-bigchaindb-wallet-plugins@0.2.3) (2021-02-16)
 
 

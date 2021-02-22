@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/s1seven/js-bigchaindb-wallet/compare/@s1seven/js-bigchaindb-key-derivation@0.1.3...@s1seven/js-bigchaindb-key-derivation@0.2.0) (2021-02-22)
+
+
+### Bug Fixes
+
+* allow derivation from seed string with different encoding ([15f86d2](https://github.com/s1seven/js-bigchaindb-wallet/commit/15f86d28c3e243dc4bddf202e6f8782ce93a3edf))
+* conversion to uint8 array ([55e6810](https://github.com/s1seven/js-bigchaindb-wallet/commit/55e6810bc3a4d3c3ac085ba640f72cfe9027da5c))
+* derivation path inheritance ([da8b881](https://github.com/s1seven/js-bigchaindb-wallet/commit/da8b881a398d95f252e95e13006fd1cee6b6a448))
+* quick fix ([7a149ac](https://github.com/s1seven/js-bigchaindb-wallet/commit/7a149aca21940df81087441b389ebcea7f9e20b8))
+* remove remaing typo and crypto-conditions ([30da48c](https://github.com/s1seven/js-bigchaindb-wallet/commit/30da48ca0f15d6cf8420ce2fa9f0658647b3eed1))
+* solve types and import issues ([5148117](https://github.com/s1seven/js-bigchaindb-wallet/commit/514811772ce761851d9bac4e1a59af264b00f3c9))
+* test case for X25519 keys derivation ([1ab6bc6](https://github.com/s1seven/js-bigchaindb-wallet/commit/1ab6bc6916a3bc11dbdcd7dd1430099475e21936))
+
+
+### Features
+
+* add curve and depth info in derivation ([7c0ede6](https://github.com/s1seven/js-bigchaindb-wallet/commit/7c0ede62b6ff446c28e04422ccbb17a410bb981e))
+
+
+
+
+
 ## [0.1.3](https://github.com/s1seven/js-bigchaindb-wallet/compare/@s1seven/js-bigchaindb-key-derivation@0.1.2...@s1seven/js-bigchaindb-key-derivation@0.1.3) (2021-02-16)
 
 

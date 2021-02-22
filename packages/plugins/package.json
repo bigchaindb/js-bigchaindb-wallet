@@ -1,6 +1,6 @@
 {
   "name": "@s1seven/js-bigchaindb-wallet-plugins",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Plugins for BigChainDB wallet",
   "keywords": [
     "bigchain",
@@ -41,7 +41,7 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
-    "@s1seven/js-bigchaindb-key-derivation": "^0.1.3",
+    "@s1seven/js-bigchaindb-key-derivation": "^0.2.0",
     "@s1seven/js-bigchaindb-wallet-types": "^0.0.3",
     "@types/lru-cache": "^5.1.0",
     "bs58": "^4.0.1",
