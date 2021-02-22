@@ -73,9 +73,9 @@ export function uint8ArrayToHexString(byteArray: Uint8Array): string {
 export function toUint8Array(content: string | Buffer | Uint8Array, encoding: BufferEncoding = 'hex'): Uint8Array {
   let bytes: Uint8Array;
   if (Buffer.isBuffer(content)) {
-    bytes = Uint8Array.from(content);
+    bytes = bufferToUint8Array(content);
   } else if (typeof content === 'string') {
-    bytes = Uint8Array.from(Buffer.from(content, encoding));
+    bytes = bufferToUint8Array(Buffer.from(content, encoding));
   }
   return bytes;
 }
