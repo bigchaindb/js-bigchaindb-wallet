@@ -136,13 +136,11 @@ export class EncryptKeyPair {
     });
   }
 
-  // TODO: test this one
   static getPublicKey(privateKey: Uint8Array, withZeroByte = true): Uint8Array {
     if (!privateKey || privateKey.length !== EncryptKeyPair.privateKeyLength) {
       throw new TypeError(INVALID_LENGTH('PrivateKey', EncryptKeyPair.privateKeyLength));
     }
     const keyPair = box.keyPair.fromSecretKey(privateKey);
-    // const zero = Buffer.alloc(1, 0);
     const zero = Buffer.from([0x40]);
     const pubKeyBuffer = withZeroByte
       ? Buffer.concat([zero, Buffer.from(keyPair.publicKey)])
@@ -150,8 +148,12 @@ export class EncryptKeyPair {
     return toUint8Array(pubKeyBuffer);
   }
 
-  static getSharedKey(secretKey: Uint8Array, publicKey: Uint8Array): Uint8Array {
-    return box.before(publicKey, secretKey);
+  static getSharedKey(privateKey: Uint8Array, publicKey: Uint8Array): Uint8Array {
+    if (publicKey.length === 33) {
+      publicKey = publicKey.subarray(1, 33);
+    }
+    // TODO return non hashed shared key ? append 0x04 ?;
+    return box.before(publicKey, privateKey);
   }
 
   static convertPublicKeyToCurve(publicKey: Uint8Array): Uint8Array {
