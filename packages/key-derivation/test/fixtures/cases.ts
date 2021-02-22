@@ -21,13 +21,13 @@ export default [
         'dcccd75fbd91b982d1e593db2f1ad662ffbc21291c5c00a23b8580fae4e695b7',
       ],
       curve: [
-        '171743712a5e1b9293a8d8442cea10c8d3ce2bf1dfd6e4fc7f194df39dfd364e',
-        '804486c02dd7db5ba35e834e6f8780046fbe264cee923fe8a96a73d73e40067c',
+        'c58be1eaa023f199c6a3c4a2ffdd92d8142eee02bfe40b5916e1b5bf5ca88002',
+        'ff23a5019becb5849b8948294ccda6b760da9ae7c02ca8f0bd7e5652860dc871',
       ],
     },
     fingerprints: {
       sign: 'z6Mkv5u1zXQAF3kexBjfWrd571eUrjKP2dFArUSdjWQe8Mgh',
-      curve: 'z6LSdEK7hg6yieXZNRU5Yh6UvR8garWSicAjVPcjkhRKjSGu',
+      curve: 'z6LSpyKCDfh354h2YiLrWVDgvnbkMVodHDqzzuhvyR2i9a57',
     },
     der: {
       sign: [
@@ -35,7 +35,7 @@ export default [
         '302e020100300506032b657004220420dcccd75fbd91b982d1e593db2f1ad662ffbc21291c5c00a23b8580fae4e695b7',
       ],
       curve: [
-        '302a300506032b6570032100171743712a5e1b9293a8d8442cea10c8d3ce2bf1dfd6e4fc7f194df39dfd364e',
+        '302a300506032b6570032100c58be1eaa023f199c6a3c4a2ffdd92d8142eee02bfe40b5916e1b5bf5ca88002',
         '300e020100300506032b657004020400',
       ],
     },
@@ -50,7 +50,7 @@ export default [
       ],
       curve: [
         '-----BEGIN PUBLIC KEY-----\n' +
-          'MCowBQYDK2VwAyEAFxdDcSpeG5KTqNhELOoQyNPOK/Hf1uT8fxlN8539Nk4=\n' +
+          'MCowBQYDK2VwAyEAxYvh6qAj8ZnGo8Si/92S2BQu7gK/5AtZFuG1v1yogAI=\n' +
           '-----END PUBLIC KEY-----\n',
         '300e020100300506032b657004020400',
       ],
@@ -78,13 +78,13 @@ export default [
         '42833e1aeeca1e12ec6d9729d73411e8b25e008987c7a9a7cf072636e4974b91',
       ],
       curve: [
-        'c98cd1bb38afddbe98fd06c57c2f99ce03152f4a5746c0d000e0450d57bde414',
-        'e03c1cc938d5865d567913439f5d953ae34550fe870222dc472f22dadabe1567',
+        '0d183c351ef1beb2c73c32c8cfb342689644429a9448bb444969482c26385452',
+        '45d461af8cab1a705a8effbbb3fe5c0a1b7e99b7cd34cb8b4c3b93dce22adb77',
       ],
     },
     fingerprints: {
       sign: 'z6MkpMQJR72i32nw2ieTNYkq38kGgXZ1jVvCBQtvHprL8fi3',
-      curve: 'z6LSqEwergwZEW7617qpCAMfY7wvJ9kou9jZfRr6JwMKH9kP',
+      curve: 'z6LScZHu5nQYixcSJa6rwaK3Fu5aiBWH4YfTHwSLgBsVH5hs',
     },
     der: {
       sign: [
@@ -92,7 +92,7 @@ export default [
         '302e020100300506032b65700422042042833e1aeeca1e12ec6d9729d73411e8b25e008987c7a9a7cf072636e4974b91',
       ],
       curve: [
-        '302a300506032b6570032100c98cd1bb38afddbe98fd06c57c2f99ce03152f4a5746c0d000e0450d57bde414',
+        '302a300506032b65700321000d183c351ef1beb2c73c32c8cfb342689644429a9448bb444969482c26385452',
         '300e020100300506032b657004020400',
       ],
     },
@@ -107,7 +107,7 @@ export default [
       ],
       curve: [
         '-----BEGIN PUBLIC KEY-----\n' +
-          'MCowBQYDK2VwAyEAyYzRuziv3b6Y/QbFfC+ZzgMVL0pXRsDQAOBFDVe95BQ=\n' +
+          'MCowBQYDK2VwAyEADRg8NR7xvrLHPDLIz7NCaJZEQpqUSLtESWlILCY4VFI=\n' +
           '-----END PUBLIC KEY-----\n',
         '300e020100300506032b657004020400',
       ],
@@ -135,13 +135,13 @@ export default [
         'f814c207b856a21be32fca44706c0f1bf02ccccaa5a7ec59624d14a716c3008a',
       ],
       curve: [
-        '354efa994dde00291ccba8943b29c0d712057375d649061609e317094f250161',
-        'b04ad89ed8d37074ba0ae25dbf51253a33e8902224a39f179ed6cc9096b55d61',
+        '3e9d8835381fedaf6be9804144f49d6b04e5b4508fd7659aec748f01e5e41c63',
+        'b781eb65b695dfcb897744cf23a5d9c90842e0ad0451dbed420832338a9fd292',
       ],
     },
     fingerprints: {
       sign: 'z6MkqHgXuMq7xzdpaVdHZXwKXWAPPYR8z49bmrfiCRVWfDkJ',
-      curve: 'z6LSfGGd3ju9fq6dmjBVwymJmapyqoFJDp4eqpizpbfBmfSY',
+      curve: 'z6LSftbmHjxgNHkEFfnviFvXZyUxtjHSjYPGRHphdq1TpA66',
     },
     der: {
       sign: [
@@ -149,7 +149,7 @@ export default [
         '302e020100300506032b657004220420f814c207b856a21be32fca44706c0f1bf02ccccaa5a7ec59624d14a716c3008a',
       ],
       curve: [
-        '302a300506032b6570032100354efa994dde00291ccba8943b29c0d712057375d649061609e317094f250161',
+        '302a300506032b65700321003e9d8835381fedaf6be9804144f49d6b04e5b4508fd7659aec748f01e5e41c63',
         '300e020100300506032b657004020400',
       ],
     },
@@ -164,7 +164,7 @@ export default [
       ],
       curve: [
         '-----BEGIN PUBLIC KEY-----\n' +
-          'MCowBQYDK2VwAyEANU76mU3eACkcy6iUOynA1xIFc3XWSQYWCeMXCU8lAWE=\n' +
+          'MCowBQYDK2VwAyEAPp2INTgf7a9r6YBBRPSdawTltFCP12Wa7HSPAeXkHGM=\n' +
           '-----END PUBLIC KEY-----\n',
         '300e020100300506032b657004020400',
       ],
@@ -192,13 +192,13 @@ export default [
         '36b00b3911af1dd0a3669a57f448b96e259606d0afbb8c4942b7bf8d7666c828',
       ],
       curve: [
-        '8b409f55e14b138b54b9065a12950deecbd860809475b6082ceac37d0ee73f36',
-        '588b1c959ef19b0c1587d3d126540533853ce2346f737c3279e67d32b5736347',
+        '68ecaf82994b7be0476c8bc269cd92b148476d80552aa67e3600d200f13eee07',
+        '80ff361560d8d5c8d3847e5382d2a05ba1e59632770152d8c80bb7015130dbf2',
       ],
     },
     fingerprints: {
       sign: 'z6Mkf7A9UUYdzxRHnxPEUgLBr6mPRDFqMThFk67uPSf7fVyN',
-      curve: 'z6LSm3kzDmCArAHhEeeCE9MG79hVnvKkXAPSdkaqiqdV2E7X',
+      curve: 'z6LSijktfFdLCd4P9LdzaBZz9wCAiURN82Xsrw9NJ8KyKpjQ',
     },
     der: {
       sign: [
@@ -206,7 +206,7 @@ export default [
         '302e020100300506032b65700422042036b00b3911af1dd0a3669a57f448b96e259606d0afbb8c4942b7bf8d7666c828',
       ],
       curve: [
-        '302a300506032b65700321008b409f55e14b138b54b9065a12950deecbd860809475b6082ceac37d0ee73f36',
+        '302a300506032b657003210068ecaf82994b7be0476c8bc269cd92b148476d80552aa67e3600d200f13eee07',
         '300e020100300506032b657004020400',
       ],
     },
@@ -221,7 +221,7 @@ export default [
       ],
       curve: [
         '-----BEGIN PUBLIC KEY-----\n' +
-          'MCowBQYDK2VwAyEAi0CfVeFLE4tUuQZaEpUN7svYYICUdbYILOrDfQ7nPzY=\n' +
+          'MCowBQYDK2VwAyEAaOyvgplLe+BHbIvCac2SsUhHbYBVKqZ+NgDSAPE+7gc=\n' +
           '-----END PUBLIC KEY-----\n',
         '300e020100300506032b657004020400',
       ],
