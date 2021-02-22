@@ -1,3 +1,4 @@
+import { scalarMult } from 'tweetnacl';
 import {
   BigChainWallet,
   BIG_CHAIN_DERIVATION_PATH,
@@ -270,5 +271,37 @@ describe('KeyDerivation', function () {
   describe('Test Case 4', specTestCase(3));
   describe('Test Case 5 - Ed25519 - vector1', specTestVector(0));
   describe('Test Case 6 - Ed25519 - vector2', specTestVector(1));
+  describe('Test Case 7 - Curve25519 - ECDH', () => {
+    let derivatedKeyPairA: DerivatedKeyPair;
+    let derivatedKeyPairB: DerivatedKeyPair;
 
+    it(`should create master key from seed - [Chain m]`, () => {
+      derivatedKeyPairA = new KeyDerivation('Alice', 'utf-8').getBaseKey('encrypt');
+      derivatedKeyPairB = new KeyDerivation('Bob', 'utf-8').getBaseKey('encrypt');
+    });
+
+    it.skip(`should create shared key from derivated key`, () => {
+      const privateKeyA = derivatedKeyPairA.key;
+      const publicKeyA = EncryptKeyPair.getPublicKey(derivatedKeyPairA.key, false);
+      const privateKeyB = derivatedKeyPairB.key;
+      const publicKeyB = EncryptKeyPair.getPublicKey(derivatedKeyPairB.key, false);
+
+      // const sharedKeyA = EncryptKeyPair.getSharedKey(privateKeyA, publicKeyB);
+      // const sharedKeyB = EncryptKeyPair.getSharedKey(privateKeyB, publicKeyA);
+      const sharedKeyA = scalarMult(privateKeyA, publicKeyB);
+      const sharedKeyB = scalarMult(privateKeyB, publicKeyA);
+
+      // expect(publicKeyA.length).toEqual(33);
+      // expect(publicKeyB.length).toEqual(32);
+      expect(sharedKeyA.length).toEqual(32);
+      expect(sharedKeyB.length).toEqual(32);
+
+      expect(uint8ArrayToHexString(sharedKeyA)).toEqual(
+        '04f34e35516325bb0d4a58507096c444a05ba13524ccf66910f11ce96c62224169',
+      );
+      expect(uint8ArrayToHexString(sharedKeyB)).toEqual(
+        '04f34e35516325bb0d4a58507096c444a05ba13524ccf66910f11ce96c62224169',
+      );
+    });
+  });
 });
