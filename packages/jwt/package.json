@@ -1,6 +1,6 @@
 {
   "name": "@bigchaindb/js-bigchaindb-wallet-jwt",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "JWT tool for BigChainDB wallet",
   "keywords": [
     "bigchaindb",
@@ -37,13 +37,13 @@
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "@bigchaindb/js-bigchaindb-wallet-plugins": "^0.2.4",
+    "@bigchaindb/js-bigchaindb-wallet-plugins": "^0.3.0",
     "rimraf": "~3.0.2",
     "typescript": "^4.1.3"
   },
   "dependencies": {
-    "@bigchaindb/js-bigchaindb-key-derivation": "^0.2.0",
-    "@bigchaindb/js-bigchaindb-wallet-types": "^0.0.3",
+    "@bigchaindb/js-bigchaindb-key-derivation": "^0.3.0",
+    "@bigchaindb/js-bigchaindb-wallet-types": "^0.0.4",
     "jwt-ed25519-tn": "git+https://github.com/getlarge/jsonwebtoken-ed25519-tn.git"
   },
   "gitHead": "b16cc42e43fe9130f2f5b06efd22cb660a155423"

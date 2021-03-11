@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.0.13 (2021-03-11)
+
+
+### Bug Fixes
+
+* add missing return types ([31f3c66](https://github.com/bigchaindb/js-bigchaindb-wallet/commit/31f3c664133eb3e24d11d3e18076cf523317b012))
+* derivedKey typo ([b65434a](https://github.com/bigchaindb/js-bigchaindb-wallet/commit/b65434a678008e21a922858611f75c46a5dda6c8))
+* make some props private ([1fd2ec8](https://github.com/bigchaindb/js-bigchaindb-wallet/commit/1fd2ec80610b46f5bdf868fae6e4863b5cc0a62b))
+* move to bigchaindb ([c0f0132](https://github.com/bigchaindb/js-bigchaindb-wallet/commit/c0f01326ab0213ea7055d335932860ea696b10b8))
+* packages naming ([0ab9e49](https://github.com/bigchaindb/js-bigchaindb-wallet/commit/0ab9e49b31efb4cf67d81620a30095acdb21640e))
+* update gitHead ([f29486d](https://github.com/bigchaindb/js-bigchaindb-wallet/commit/f29486d4d057758c40f696cab82d5f0adb775716))
+* update package lock ([c07c3f0](https://github.com/bigchaindb/js-bigchaindb-wallet/commit/c07c3f03210af90c63b3e8050c7b5e726238e390))
+* use new wallet API ([b16cc42](https://github.com/bigchaindb/js-bigchaindb-wallet/commit/b16cc42e43fe9130f2f5b06efd22cb660a155423))
+
+
+
+
+
 ## [0.0.12](https://github.com/s1seven/js-bigchaindb-wallet/compare/@s1seven/js-bigchaindb-wallet-jwt@0.0.11...@s1seven/js-bigchaindb-wallet-jwt@0.0.12) (2021-02-22)
 
 
