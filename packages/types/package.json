@@ -1,5 +1,5 @@
 {
-  "name": "@bigchaindb/js-bigchaindb-wallet-types",
+  "name": "@bigchaindb/wallet-types",
   "version": "0.0.5",
   "description": "Shared types",
   "license": "Apache-2.0",
