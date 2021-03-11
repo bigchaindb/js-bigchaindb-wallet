@@ -1,5 +1,5 @@
 {
-  "name": "@bigchaindb/js-bigchaindb-key-derivation",
+  "name": "@bigchaindb/wallet-hd",
   "version": "0.3.1",
   "description": "Key derivation for BigChainDB",
   "keywords": [
