@@ -1,5 +1,5 @@
 {
-  "name": "@s1seven/js-bigchaindb-key-derivation",
+  "name": "@bigchaindb/js-bigchaindb-key-derivation",
   "version": "0.2.0",
   "description": "Key derivation for BigChainDB",
   "keywords": [
@@ -9,7 +9,7 @@
   ],
   "license": "Apache-2.0",
   "author": "getlarge <ed@getlarge.eu>",
-  "homepage": "https://github.com/s1seven/js-bigchaindb-wallets#readme",
+  "homepage": "https://github.com/bigchaindb/js-bigchaindb-wallets#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
