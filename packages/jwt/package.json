@@ -11,6 +11,7 @@
   "author": "getlarge <ed@getlarge.eu>",
   "homepage": "https://github.com/bigchaindb/js-bigchaindb-wallets#readme",
   "publishConfig": {
+    "cache": "~/.npm",
     "registry": "https://registry.npmjs.org/"
   },
   "publicConfig": {
@@ -46,5 +47,5 @@
     "@bigchaindb/js-bigchaindb-wallet-types": "^0.0.4",
     "jwt-ed25519-tn": "git+https://github.com/getlarge/jsonwebtoken-ed25519-tn.git"
   },
-  "gitHead": "b16cc42e43fe9130f2f5b06efd22cb660a155423"
+  "gitHead": "d9d4d11ee7298113013dcb2895fc2160dc371837"
 }
