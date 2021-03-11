@@ -1,6 +1,6 @@
+import { Cipher } from '@bigchaindb/wallet-types';
+import { BigChainWallet } from '@bigchaindb/wallet-hd';
 import { decode, sign, verify, JsonWebTokenError } from 'jwt-ed25519-tn';
-import { Cipher } from '@bigchaindb/js-bigchaindb-wallet-types';
-import { BigChainWallet } from '@bigchaindb/js-bigchaindb-key-derivation';
 
 // const PRIVATE_KEY_SIZE = 64;
 // const PUBLIC_KEY_SIZE = 32;
