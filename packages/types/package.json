@@ -6,6 +6,7 @@
   "author": "getlarge <ed@getlarge.eu>",
   "homepage": "https://github.com/bigchaindb/js-bigchaindb-wallets#readme",
   "publishConfig": {
+    "cache": "~/.npm",
     "registry": "https://registry.npmjs.org/"
   },
   "publicConfig": {
@@ -35,5 +36,5 @@
     "rimraf": "~3.0.2",
     "typescript": "^4.1.3"
   },
-  "gitHead": "d2545b2483b5cd2ce16175947a55f66c51c42690"
+  "gitHead": "d9d4d11ee7298113013dcb2895fc2160dc371837"
 }
