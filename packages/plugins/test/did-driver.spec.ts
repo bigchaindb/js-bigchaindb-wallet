@@ -1,4 +1,4 @@
-import { BigChainWallet, BIG_CHAIN_DERIVATION_PATH, KeyDerivation } from '@bigchaindb/js-bigchaindb-key-derivation';
+import { BigChainWallet, BIG_CHAIN_DERIVATION_PATH, KeyDerivation } from '@bigchaindb/wallet-hd';
 import { DidDriver } from '../src/did-driver';
 import { cases } from './fixtures/did-driver';
 

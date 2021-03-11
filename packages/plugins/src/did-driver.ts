@@ -5,7 +5,7 @@ import {
   KeyPairDerivationOptions,
   SignKeyPair,
   SignKeyPairFactory,
-} from '@bigchaindb/js-bigchaindb-key-derivation';
+} from '@bigchaindb/wallet-hd';
 import LRU from 'lru-cache';
 import { constants as securityConstants } from 'security-context';
 
