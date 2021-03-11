@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.14](https://github.com/bigchaindb/js-bigchaindb-wallet/compare/@bigchaindb/js-bigchaindb-wallet-jwt@0.0.13...@bigchaindb/js-bigchaindb-wallet-jwt@0.0.14) (2021-03-11)
+
+
+### Bug Fixes
+
+* npm publish issue ([1e6372a](https://github.com/bigchaindb/js-bigchaindb-wallet/commit/1e6372ae5b4dd8b94e2462929a74b60ed791f92b))
+
+
+
+
+
 ## 0.0.13 (2021-03-11)
 
 

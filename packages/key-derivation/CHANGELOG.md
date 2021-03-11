@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.1](https://github.com/bigchaindb/js-bigchaindb-wallet/compare/@bigchaindb/js-bigchaindb-key-derivation@0.3.0...@bigchaindb/js-bigchaindb-key-derivation@0.3.1) (2021-03-11)
+
+
+### Bug Fixes
+
+* npm publish issue ([7f66d13](https://github.com/bigchaindb/js-bigchaindb-wallet/commit/7f66d13b03bf5ff188e75d045872964b98e71901))
+
+
+
+
+
 # 0.3.0 (2021-03-11)
 
 
