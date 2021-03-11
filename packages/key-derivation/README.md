@@ -1,5 +1,10 @@
 # `key-derivation`
 
+[![npm][npm-image]][npm-url] 
+
+[npm-image]: https://img.shields.io/npm/v/@bigchaindb/wallet-hd.svg?style=flat
+[npm-url]: https://npmjs.org/package/@bigchaindb/wallet-hd
+
 Heavily inspired by [stellar-hd-wallet](https://github.com/chatch/stellar-hd-wallet).
 Complies to [BIP44] and [SLIP10].
 
