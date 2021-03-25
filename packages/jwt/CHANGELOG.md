@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.16](https://github.com/bigchaindb/js-bigchaindb-wallet/compare/@bigchaindb/jwt@0.0.15...@bigchaindb/jwt@0.0.16) (2021-03-25)
+
+
+### Bug Fixes
+
+* github repo links ([6614b71](https://github.com/bigchaindb/js-bigchaindb-wallet/commit/6614b713d0db3981e8fcad4a0590f9aea4c776cd))
+
+
+
+
+
 ## 0.0.15 (2021-03-11)
 
 
