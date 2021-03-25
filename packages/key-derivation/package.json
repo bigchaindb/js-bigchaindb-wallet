@@ -9,7 +9,7 @@
   ],
   "license": "Apache-2.0",
   "author": "getlarge <ed@getlarge.eu>",
-  "homepage": "https://github.com/bigchaindb/js-bigchaindb-wallets#readme",
+  "homepage": "https://github.com/bigchaindb/js-bigchaindb-wallet#readme",
   "publishConfig": {
     "cache": "~/.npm",
     "registry": "https://registry.npmjs.org/"

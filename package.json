@@ -1,13 +1,13 @@
 {
   "name": "root",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/bigchaindb/js-bigchaindb-wallets#readme",
+  "homepage": "https://github.com/bigchaindb/js-bigchaindb-wallet#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bigchaindb/js-bigchaindb-wallets.git"
+    "url": "git+https://github.com/bigchaindb/js-bigchaindb-wallet.git"
   },
   "bugs": {
-    "url": "https://github.com/bigchaindb/js-bigchaindb-wallets/issues"
+    "url": "https://github.com/bigchaindb/js-bigchaindb-wallet/issues"
   },
   "engines": {
     "node": ">=12",
