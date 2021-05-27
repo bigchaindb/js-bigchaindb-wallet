@@ -40,13 +40,12 @@
   "devDependencies": {
     "@bigchaindb/wallet-plugins": "^0.4.2",
     "rimraf": "~3.0.2",
-    "typescript": "^4.1.3"
+    "typescript": "^4.3.2"
   },
   "dependencies": {
     "@bigchaindb/wallet-hd": "^0.4.1",
     "@bigchaindb/wallet-types": "^0.0.7",
-    "jwt-ed25519-tn": "git+https://github.com/getlarge/jsonwebtoken-ed25519-tn.git",
-    "jwt-nacl": "0.0.4"
+    "jwt-nacl": "^0.0.4"
   },
   "gitHead": "d9d4d11ee7298113013dcb2895fc2160dc371837"
 }
