@@ -45,7 +45,8 @@
   "dependencies": {
     "@bigchaindb/wallet-hd": "^0.4.1",
     "@bigchaindb/wallet-types": "^0.0.7",
-    "jwt-ed25519-tn": "git+https://github.com/getlarge/jsonwebtoken-ed25519-tn.git"
+    "jwt-ed25519-tn": "git+https://github.com/getlarge/jsonwebtoken-ed25519-tn.git",
+    "jwt-nacl": "0.0.4"
   },
   "gitHead": "d9d4d11ee7298113013dcb2895fc2160dc371837"
 }
