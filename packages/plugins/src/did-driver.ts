@@ -115,14 +115,14 @@ export class DidDriver {
     return didDoc;
   }
 
-  async generate(
+  generate(
     options: {
       keyType?: string;
       derivationOptions?: KeyPairDerivationOptions;
       seed?: string;
       derivatedKeyPair?: DerivatedKeyPair;
     } = {},
-  ) {
+  ): Promise<DidDoc> {
     const { keyType = SignKeyPair.suite, seed, derivationOptions, derivatedKeyPair } = options;
     if (keyType === SignKeyPair.suite) {
       let signKeyPairFactory: SignKeyPairFactory;
@@ -203,7 +203,7 @@ export class DidDriver {
     return didDoc;
   }
 
-  async computeKeyId(key: EncryptKeyPair | SignKeyPair) {
+  computeKeyId(key: EncryptKeyPair | SignKeyPair): string {
     return `did:${this.method}:${key.getFingerprint()}#${key.getFingerprint()}`;
   }
 }
