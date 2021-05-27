@@ -1,6 +1,6 @@
 import { Cipher } from '@bigchaindb/wallet-types';
 import { BigChainWallet } from '@bigchaindb/wallet-hd';
-import { decode, sign, verify, JsonWebTokenError } from 'jwt-ed25519-tn';
+import { decode, sign, verify, JsonWebTokenError } from 'jwt-nacl';
 
 // const PRIVATE_KEY_SIZE = 64;
 // const PUBLIC_KEY_SIZE = 32;
@@ -85,7 +85,7 @@ export class TokenService {
   private _privateKey: Buffer;
   private _cipher: Cipher;
 
-  static fromSeed(seed: string | Buffer, accountIndex?: number) {
+  static fromSeed(seed: string | Buffer, accountIndex?: number): TokenService {
     const wallet = BigChainWallet.fromSeed(seed);
     const keyPair = wallet.getDerivatedKeyPair('sign', { account: accountIndex });
     const privateKey = keyPair.fullPrivateKey('buffer');
@@ -93,7 +93,10 @@ export class TokenService {
     return new TokenService({ publicKey, privateKey });
   }
 
-  static fromKeyPair(keyPair: { publicKey: Uint8Array | Buffer | string; privateKey: Uint8Array | Buffer | string }) {
+  static fromKeyPair(keyPair: {
+    publicKey: Uint8Array | Buffer | string;
+    privateKey: Uint8Array | Buffer | string;
+  }): TokenService {
     if (
       !Object.prototype.hasOwnProperty.call(keyPair, 'publicKey') ||
       !Object.prototype.hasOwnProperty.call(keyPair, 'privateKey')
@@ -146,7 +149,7 @@ export class TokenService {
     this._cipher = value;
   }
 
-  validateCipher() {
+  validateCipher(): void {
     if (!this.cipher || !this.cipher.type) {
       throw new Error(MISSING_CIPHER_INSTANCE);
     }
@@ -158,7 +161,7 @@ export class TokenService {
     return sign(payload, { key: this._privateKey, algorithm: this.algorithm }, { issuer, subject, ...options });
   }
 
-  async encrypt<T = BaseTokenPayload>(payload: T): Promise<string> {
+  encrypt<T = BaseTokenPayload>(payload: T): Promise<string> {
     this.validateCipher();
     if (this.cipher.type === 'asymmetric') {
       return this.cipher.encrypt<T>(payload, this.cipher.sharedKey);
@@ -168,7 +171,7 @@ export class TokenService {
     throw new Error(INVALID_CIPHER);
   }
 
-  async produce<T = Record<string, unknown>>(payload: T, options?: SignOptions): Promise<string> {
+  produce<T = Record<string, unknown>>(payload: T, options?: SignOptions): Promise<string> {
     this.validateCipher();
     const jwt = this.sign<T>(payload, options);
     return this.encrypt<BaseTokenPayload>({ jwt });
@@ -178,7 +181,7 @@ export class TokenService {
     return decode(jwt, { complete: true }) as DecodedToken<T>;
   }
 
-  async decrypt<T = BaseTokenPayload>(encryptedPayload: string): Promise<T> {
+  decrypt<T = BaseTokenPayload>(encryptedPayload: string): Promise<T> {
     this.validateCipher();
     if (this.cipher.type === 'asymmetric') {
       return this.cipher.decrypt<T>(encryptedPayload, this.cipher.sharedKey);
@@ -188,7 +191,7 @@ export class TokenService {
     throw new Error(INVALID_CIPHER);
   }
 
-  async verify<T = Record<string, unknown>>(jwt: string, options: VerificationOptions = {}): Promise<Verification & T> {
+  verify<T = Record<string, unknown>>(jwt: string, options: VerificationOptions = {}): Promise<Verification & T> {
     return new Promise((resolve, reject) => {
       verify(
         jwt,
