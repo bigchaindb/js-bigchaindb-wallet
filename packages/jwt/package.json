@@ -1,6 +1,6 @@
 {
   "name": "@bigchaindb/jwt",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "JWT tool for BigChainDB wallet",
   "keywords": [
     "bigchaindb",
@@ -39,7 +39,7 @@
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "@bigchaindb/wallet-plugins": "^0.4.4",
+    "@bigchaindb/wallet-plugins": "^0.4.5",
     "rimraf": "~3.0.2"
   },
   "dependencies": {
