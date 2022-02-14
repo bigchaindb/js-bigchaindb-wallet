@@ -7,7 +7,8 @@ import {
   SignKeyPairFactory,
 } from '@bigchaindb/wallet-hd';
 import LRU from 'lru-cache';
-import { constants as securityConstants } from 'security-context';
+
+export const SECURITY_CONTEXT_V2_URL = 'https://w3id.org/security/v2';
 
 export type DidDocPublicKey = {
   id: string;
@@ -36,7 +37,7 @@ export type DidDocKeyPair = {
 };
 
 export type DidDoc = {
-  '@context': securityConstants.SECURITY_CONTEXT_V2_URL;
+  '@context': typeof SECURITY_CONTEXT_V2_URL;
   id: string;
   publicKey: DidDocPublicKey[];
   authentication: string[];
@@ -47,10 +48,7 @@ export type DidDoc = {
   keys?: DidDocKeyPair[];
 };
 
-export type DidDocFragment = { '@context': securityConstants.SECURITY_CONTEXT_V2_URL } & (
-  | DidDocPublicKey
-  | DidDocKeyAgreement
-);
+export type DidDocFragment = { '@context': typeof SECURITY_CONTEXT_V2_URL } & (DidDocPublicKey | DidDocKeyAgreement);
 
 function getKey(options: { didDoc: DidDoc; keyIdFragment: string }): DidDocFragment {
   const { didDoc, keyIdFragment } = options;
@@ -60,12 +58,12 @@ function getKey(options: { didDoc: DidDoc; keyIdFragment: string }): DidDocFragm
   const publicKey = didDoc.publicKey[0];
   if (publicKey.id === keyId) {
     return {
-      '@context': securityConstants.SECURITY_CONTEXT_V2_URL,
+      '@context': SECURITY_CONTEXT_V2_URL,
       ...publicKey,
     };
   }
   return {
-    '@context': securityConstants.SECURITY_CONTEXT_V2_URL,
+    '@context': SECURITY_CONTEXT_V2_URL,
     ...didDoc.keyAgreement[0],
   };
 }
@@ -174,7 +172,7 @@ export class DidDriver {
     };
 
     const didDoc: DidDoc = {
-      '@context': ['https://w3id.org/did/v0.11'],
+      '@context': SECURITY_CONTEXT_V2_URL,
       id: did,
       publicKey: [didDocPublicKey],
       authentication: [keyId],
