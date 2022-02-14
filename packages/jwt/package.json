@@ -1,6 +1,6 @@
 {
   "name": "@bigchaindb/jwt",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "JWT tool for BigChainDB wallet",
   "keywords": [
     "bigchaindb",
@@ -39,12 +39,12 @@
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "@bigchaindb/wallet-plugins": "^0.4.3",
+    "@bigchaindb/wallet-plugins": "^0.4.4",
     "rimraf": "~3.0.2"
   },
   "dependencies": {
-    "@bigchaindb/wallet-hd": "^0.4.2",
-    "@bigchaindb/wallet-types": "^0.0.7",
+    "@bigchaindb/wallet-hd": "^0.4.3",
+    "@bigchaindb/wallet-types": "^0.0.8",
     "jwt-nacl": "^0.0.4"
   },
   "gitHead": "d9d4d11ee7298113013dcb2895fc2160dc371837"

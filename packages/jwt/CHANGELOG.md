@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.19](https://github.com/bigchaindb/js-bigchaindb-wallet/compare/@bigchaindb/jwt@0.0.18...@bigchaindb/jwt@0.0.19) (2022-02-14)
+
+**Note:** Version bump only for package @bigchaindb/jwt
+
+
+
+
+
 ## [0.0.18](https://github.com/bigchaindb/js-bigchaindb-wallet/compare/@bigchaindb/jwt@0.0.17...@bigchaindb/jwt@0.0.18) (2021-05-27)
 
 

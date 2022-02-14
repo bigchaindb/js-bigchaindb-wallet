@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.4](https://github.com/bigchaindb/js-bigchaindb-wallet/compare/@bigchaindb/wallet-plugins@0.4.3...@bigchaindb/wallet-plugins@0.4.4) (2022-02-14)
+
+**Note:** Version bump only for package @bigchaindb/wallet-plugins
+
+
+
+
+
 ## [0.4.3](https://github.com/bigchaindb/js-bigchaindb-wallet/compare/@bigchaindb/wallet-plugins@0.4.2...@bigchaindb/wallet-plugins@0.4.3) (2021-05-27)
 
 

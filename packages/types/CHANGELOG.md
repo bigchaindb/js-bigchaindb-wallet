@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.8](https://github.com/bigchaindb/js-bigchaindb-wallet/compare/@bigchaindb/wallet-types@0.0.7...@bigchaindb/wallet-types@0.0.8) (2022-02-14)
+
+
+### Bug Fixes
+
+* update package lock ([f8ed2d6](https://github.com/bigchaindb/js-bigchaindb-wallet/commit/f8ed2d6dbe203405dd9c9f06bdc009a9e9248d32))
+
+
+
+
+
 ## [0.0.7](https://github.com/bigchaindb/js-bigchaindb-wallet/compare/@bigchaindb/wallet-types@0.0.6...@bigchaindb/wallet-types@0.0.7) (2021-03-25)
 
 
