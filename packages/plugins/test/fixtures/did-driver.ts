@@ -5,8 +5,7 @@ export const cases = {
       id: 'did:key:z6MkpajDAJTwcNK23pqAYGrxZHrkFVZKZoed9zDRNLC32uab',
       publicKey: [
         {
-          id:
-            'did:key:z6MkpajDAJTwcNK23pqAYGrxZHrkFVZKZoed9zDRNLC32uab#z6MkpajDAJTwcNK23pqAYGrxZHrkFVZKZoed9zDRNLC32uab',
+          id: 'did:key:z6MkpajDAJTwcNK23pqAYGrxZHrkFVZKZoed9zDRNLC32uab#z6MkpajDAJTwcNK23pqAYGrxZHrkFVZKZoed9zDRNLC32uab',
           type: 'Ed25519VerificationKey2018',
           controller: 'did:key:z6MkpajDAJTwcNK23pqAYGrxZHrkFVZKZoed9zDRNLC32uab',
           publicKeyBase58: 'B8UAa4DWGppYwKzTrhu7iCJkRvHU9vQGTyJVY4E27goD',
@@ -27,8 +26,7 @@ export const cases = {
       ],
       keyAgreement: [
         {
-          id:
-            'did:key:z6MkpajDAJTwcNK23pqAYGrxZHrkFVZKZoed9zDRNLC32uab#z6LSpouJakfanDWpA3t4GwMf8CP6WxBnjWTx2H6p35LMVrNa',
+          id: 'did:key:z6MkpajDAJTwcNK23pqAYGrxZHrkFVZKZoed9zDRNLC32uab#z6LSpouJakfanDWpA3t4GwMf8CP6WxBnjWTx2H6p35LMVrNa',
           type: 'X25519KeyAgreementKey2019',
           controller: 'did:key:z6MkpajDAJTwcNK23pqAYGrxZHrkFVZKZoed9zDRNLC32uab',
           publicKeyBase58: 'E8j94Srigko54fWHkHqhocAcfoeg2uHo9JP8YcgpnUbp',
@@ -63,8 +61,7 @@ export const cases = {
       id: 'did:key:z6MkfvS8vFyiyeutQTZKtGATttdtKci4QynReKznTjSHTbZe',
       publicKey: [
         {
-          id:
-            'did:key:z6MkfvS8vFyiyeutQTZKtGATttdtKci4QynReKznTjSHTbZe#z6MkfvS8vFyiyeutQTZKtGATttdtKci4QynReKznTjSHTbZe',
+          id: 'did:key:z6MkfvS8vFyiyeutQTZKtGATttdtKci4QynReKznTjSHTbZe#z6MkfvS8vFyiyeutQTZKtGATttdtKci4QynReKznTjSHTbZe',
           type: 'Ed25519VerificationKey2018',
           controller: 'did:key:z6MkfvS8vFyiyeutQTZKtGATttdtKci4QynReKznTjSHTbZe',
           publicKeyBase58: '2UB6L1jHe7RRHxidChCd3o5tW3SD16Y4xK5rdTUGYNnG',
@@ -85,8 +82,7 @@ export const cases = {
       ],
       keyAgreement: [
         {
-          id:
-            'did:key:z6MkfvS8vFyiyeutQTZKtGATttdtKci4QynReKznTjSHTbZe#z6LSeA22bArDLqnYXwicUFzhqXwQvHNBTGxT5bvNccXMsN37',
+          id: 'did:key:z6MkfvS8vFyiyeutQTZKtGATttdtKci4QynReKznTjSHTbZe#z6LSeA22bArDLqnYXwicUFzhqXwQvHNBTGxT5bvNccXMsN37',
           type: 'X25519KeyAgreementKey2019',
           controller: 'did:key:z6MkfvS8vFyiyeutQTZKtGATttdtKci4QynReKznTjSHTbZe',
           publicKeyBase58: '3Uqs4s3MFP4oSZLqwcUkWwiw58q4kfnJCdCh89sq9zGM',

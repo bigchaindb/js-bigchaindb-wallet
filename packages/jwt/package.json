@@ -34,13 +34,13 @@
     "cleanup": "rimraf -rf dist coverage",
     "compile": "tsc -p tsconfig.build.json",
     "lint": "eslint ./ --ext .js,.ts,.tsx --quiet --fix",
-    "test": "jest --ci --config ../../jest.config.json ",
+    "test": "jest --runInBand",
+    "test:cov": "rimraf -rf ./coverage && jest --ci --runInBand --coverage",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@bigchaindb/wallet-plugins": "^0.4.3",
-    "rimraf": "~3.0.2",
-    "typescript": "^4.3.2"
+    "rimraf": "~3.0.2"
   },
   "dependencies": {
     "@bigchaindb/wallet-hd": "^0.4.2",

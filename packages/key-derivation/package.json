@@ -34,13 +34,12 @@
     "cleanup": "rimraf -rf dist coverage",
     "compile": "tsc -p tsconfig.build.json",
     "lint": "eslint ./ --ext .js,.ts,.tsx --quiet --fix",
-    "test": "jest --ci --config ../../jest.config.json ",
+    "test": "jest --runInBand",
+    "test:cov": "rimraf -rf ./coverage && jest --ci --runInBand --coverage",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "eslint": "^7.16.0",
-    "rimraf": "~3.0.2",
-    "typescript": "^4.3.2"
+    "rimraf": "~3.0.2"
   },
   "dependencies": {
     "bip39": "^3.0.4",
