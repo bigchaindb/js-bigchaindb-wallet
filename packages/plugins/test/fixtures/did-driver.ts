@@ -1,7 +1,7 @@
 export const cases = {
   fromSeed: {
     didDoc: {
-      '@context': ['https://w3id.org/did/v0.11'],
+      '@context': 'https://w3id.org/security/v2',
       id: 'did:key:z6MkpajDAJTwcNK23pqAYGrxZHrkFVZKZoed9zDRNLC32uab',
       publicKey: [
         {
@@ -57,7 +57,7 @@ export const cases = {
   },
   fromDerivatedKeyPair: {
     didDoc: {
-      '@context': ['https://w3id.org/did/v0.11'],
+      '@context': 'https://w3id.org/security/v2',
       id: 'did:key:z6MkfvS8vFyiyeutQTZKtGATttdtKci4QynReKznTjSHTbZe',
       publicKey: [
         {
@@ -120,7 +120,7 @@ export const cases = {
     publicKeyBase64: 'ln6mhnFyENBbNuoqWvdbnvvT7qKNmAABnoeCkBUinFQ=',
   },
   fromDidAuthority: {
-    '@context': ['https://w3id.org/did/v0.11'],
+    '@context': 'https://w3id.org/security/v2',
     id: 'did:key:z6MkpajDAJTwcNK23pqAYGrxZHrkFVZKZoed9zDRNLC32uab',
     publicKey: [
       {
