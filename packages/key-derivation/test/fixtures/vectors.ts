@@ -46,8 +46,7 @@ export default [
   },
   {
     // https://github.com/satoshilabs/slips/blob/master/slip-0010.md#test-vector-2-for-ed25519
-    seed:
-      'fffcf9f6f3f0edeae7e4e1dedbd8d5d2cfccc9c6c3c0bdbab7b4b1aeaba8a5a29f9c999693908d8a8784817e7b7875726f6c696663605d5a5754514e4b484542',
+    seed: 'fffcf9f6f3f0edeae7e4e1dedbd8d5d2cfccc9c6c3c0bdbab7b4b1aeaba8a5a29f9c999693908d8a8784817e7b7875726f6c696663605d5a5754514e4b484542',
     chainCode: 'ef70a74db9c3a5af931b5fe73ed8e1a53464133654fd55e7a66f8570b8e33c3b',
     key: '171cb88b1b3c1db25add599712e36245d75bc65a1a5c9e18d76f9f2b1eab4012',
     // publicKey: '018fe9693f8fa62a4305a140b9764c5ee01e455963744fe18204b4fb948249308a',

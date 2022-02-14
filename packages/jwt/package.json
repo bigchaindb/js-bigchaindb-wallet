@@ -39,8 +39,7 @@
   },
   "devDependencies": {
     "@bigchaindb/wallet-plugins": "^0.4.3",
-    "rimraf": "~3.0.2",
-    "typescript": "^4.3.2"
+    "rimraf": "~3.0.2"
   },
   "dependencies": {
     "@bigchaindb/wallet-hd": "^0.4.2",
